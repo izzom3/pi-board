@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from pi_board.screen import detect_screen_size
+
 
 def _env_int(name: str, default: int) -> int:
     import os
@@ -23,6 +25,10 @@ class Settings:
     posters_dir: Path
     display_backend: str
     slideshow_delay_seconds: int
+    rotate_degrees_clockwise: int
+    screen_width: int | None
+    screen_height: int | None
+    fit_mode: str
 
 
 def load_settings() -> Settings:
@@ -33,6 +39,17 @@ def load_settings() -> Settings:
     posters_dir = Path(os.getenv("PIBOARD_POSTERS_DIR", "./posters")).expanduser().resolve()
     display_backend = os.getenv("PIBOARD_DISPLAY_BACKEND", "feh").strip().lower()
     slideshow_delay_seconds = _env_int("PIBOARD_SLIDESHOW_DELAY_SECONDS", 10)
+    rotate_degrees_clockwise = _env_int("PIBOARD_ROTATE_DEGREES_CLOCKWISE", 90)
+
+    screen_width = _env_int("PIBOARD_SCREEN_WIDTH", 0) or None
+    screen_height = _env_int("PIBOARD_SCREEN_HEIGHT", 0) or None
+
+    if screen_width is None or screen_height is None:
+        detected = detect_screen_size()
+        if detected:
+            screen_width, screen_height = detected
+
+    fit_mode = os.getenv("PIBOARD_FIT_MODE", "stretch").strip().lower()
 
     return Settings(
         host=host,
@@ -40,4 +57,8 @@ def load_settings() -> Settings:
         posters_dir=posters_dir,
         display_backend=display_backend,
         slideshow_delay_seconds=slideshow_delay_seconds,
+        rotate_degrees_clockwise=rotate_degrees_clockwise,
+        screen_width=screen_width,
+        screen_height=screen_height,
+        fit_mode=fit_mode,
     )

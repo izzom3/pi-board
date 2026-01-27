@@ -45,6 +45,9 @@ Set these environment variables (or put them in `.env`):
 - `PIBOARD_POSTERS_DIR` (default: `./posters`)
 - `PIBOARD_DISPLAY_BACKEND` (`feh` | `fbi` | `dummy`)
 - `PIBOARD_SLIDESHOW_DELAY_SECONDS` (default: `10`)
+- `PIBOARD_ROTATE_DEGREES_CLOCKWISE` (default: `90`)
+- `PIBOARD_FIT_MODE` (`stretch` | `cover` | `contain`, default: `stretch`)
+- `PIBOARD_SCREEN_WIDTH` / `PIBOARD_SCREEN_HEIGHT` (optional overrides)
 - `PIBOARD_HOST` (default: `0.0.0.0`)
 - `PIBOARD_PORT` (default: `5000`)
 

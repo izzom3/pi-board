@@ -26,6 +26,10 @@ def create_app() -> Flask:
     app.config["PIBOARD_DISPLAY"] = create_display_manager(
         settings.display_backend,
         state_dir=state_dir,
+        rotate_degrees_clockwise=settings.rotate_degrees_clockwise,
+        screen_width=settings.screen_width,
+        screen_height=settings.screen_height,
+        fit_mode=settings.fit_mode,
     )
 
     settings.posters_dir.mkdir(parents=True, exist_ok=True)
