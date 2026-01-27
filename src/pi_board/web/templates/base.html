@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pi-Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">Pi-Board</div>
+      <nav class="tabs">
+        <a class="tab" href="{{ url_for('piboard.home') }}">Posters</a>
+        <a class="tab" href="{{ url_for('piboard.placeholder_app', app_name='todo') }}">Todo</a>
+        <a class="tab" href="{{ url_for('piboard.placeholder_app', app_name='calendar') }}">Calendar</a>
+        <a class="tab" href="{{ url_for('piboard.placeholder_app', app_name='news') }}">News</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

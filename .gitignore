@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.ruff_cache/
+.venv/
+.piboard/
+
+# Env
+.env
+
+# OS/editor
+.DS_Store
+.vscode/
+
+# Pi-Board data (do not commit posters)
+posters/*.png
+posters/*.jpg
+posters/*.jpeg
+posters/*.webp
+posters/*.gif
+
+# Logs / pid / temp
+*.log
+*.pid
+/tmp/

@@ -1,0 +1,72 @@
+Metadata-Version: 2.4
+Name: pi-board
+Version: 0.1.0
+Summary: Pi-Board: a Raspberry Pi wall dashboard (posters, todo, calendar, news, etc.)
+Author: Pi-Board Contributors
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: Flask>=3.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: ruff>=0.6.0; extra == "dev"
+
+# Pi-Board
+
+Pi-Board is a self-hosted dashboard intended to run on a Raspberry Pi (but it also runs on a normal PC). The long-term goal is a modular wall display with apps like **movie posters**, **todo**, **calendar**, and **news**.
+
+Right now it ships a working **Poster** app:
+- Upload/delete posters
+- Start slideshow (shuffle all)
+- Start slideshow from a custom selection
+- Show a single poster
+- Stop slideshow
+
+## Quickstart (dev)
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e '.[dev]'
+
+# Optional: copy env template
+cp .env.example .env
+
+flask --app pi_board.web run --host 0.0.0.0 --port 5000
+```
+
+Then open:
+- http://localhost:5000
+- or from another device on your LAN: `http://<pi-ip>:5000`
+
+## Running on the Pi (recommended)
+
+For showing images full-screen, Pi-Board uses an external viewer backend.
+
+### Backend options
+- **feh** (recommended if you run a desktop / X11 / Wayland): `sudo apt install feh`
+- **fbi** (framebuffer console, no desktop): `sudo apt install fbi`
+
+Select backend via env var:
+- `PIBOARD_DISPLAY_BACKEND=feh` (default)
+- `PIBOARD_DISPLAY_BACKEND=fbi`
+
+## Configuration
+
+Set these environment variables (or put them in `.env`):
+- `PIBOARD_POSTERS_DIR` (default: `./posters`)
+- `PIBOARD_DISPLAY_BACKEND` (`feh` | `fbi` | `dummy`)
+- `PIBOARD_SLIDESHOW_DELAY_SECONDS` (default: `10`)
+- `PIBOARD_HOST` (default: `0.0.0.0`)
+- `PIBOARD_PORT` (default: `5000`)
+
+## Notes
+
+- Do **not** commit copyrighted posters to git. The repo ignores common image extensions by default.
+- The `todo`, `calendar`, and `news` apps are placeholders for now.
+
+## License
+
+MIT

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="card">
+    <h1>Posters</h1>
+    <p class="muted">Upload posters, then start a slideshow or show a single image.</p>
+
+    <div class="row">
+      <form class="upload" action="{{ url_for('piboard.posters_upload') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*,.webp" required />
+        <button type="submit">Upload</button>
+      </form>
+
+      <div class="controls">
+        <label class="control">
+          Delay (seconds)
+          <input id="delaySeconds" type="number" min="1" max="3600" value="10" />
+        </label>
+        <label class="control checkbox">
+          <input id="shuffle" type="checkbox" checked />
+          Shuffle playlist
+        </label>
+        <div class="buttons">
+          <button type="button" onclick="PiBoard.startRandom()">Shuffle all</button>
+          <button type="button" id="playSelected" onclick="PiBoard.startSelected()" disabled>Play selected</button>
+          <button type="button" id="showSingle" onclick="PiBoard.showSingle()" disabled>Show single</button>
+          <button type="button" class="danger" onclick="PiBoard.stop()">Stop</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Your posters</h2>
+    {% if posters|length == 0 %}
+      <p class="muted">No posters yet. Upload a few images to begin.</p>
+    {% endif %}
+
+    <div class="grid" id="posterGrid">
+      {% for poster in posters %}
+        <div class="poster" data-filename="{{ poster }}" onclick="PiBoard.toggle(this)">
+          <img src="{{ url_for('piboard.media_poster', filename=poster) }}" alt="{{ poster }}" />
+          <div class="poster-meta">
+            <div class="name">{{ poster }}</div>
+            <button type="button" class="link danger" onclick="PiBoard.deletePoster(event, '{{ poster }}')">Delete</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
