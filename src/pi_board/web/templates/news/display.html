@@ -184,9 +184,11 @@
     </div>
 
     <div class="display-controls">
+      {% if total > 0 %}
       <a href="{{ url_for('piboard.news_display', feed_key=feed_key, index=(index - 1) if index > 0 else (total - 1)) }}">← Prev</a>
       <button id="toggleAuto">⏸ Pause</button>
       <a href="{{ url_for('piboard.news_display', feed_key=feed_key, index=(index + 1) % total) }}">Next →</a>
+      {% endif %}
       <a href="{{ url_for('piboard.news_home') }}">✕ Exit</a>
     </div>
   </div>

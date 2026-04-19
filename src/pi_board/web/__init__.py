@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pathlib import Path
+import logging
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -14,6 +14,11 @@ def create_app() -> Flask:
     load_dotenv(override=False)
     settings = load_settings()
 
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+
     app = Flask(
         __name__,
         template_folder="templates",
@@ -23,7 +28,7 @@ def create_app() -> Flask:
     app.config["PIBOARD_SETTINGS"] = settings
     app.config["PIBOARD_POSTERS_DIR"] = settings.posters_dir
 
-    state_dir = Path(".piboard").resolve()
+    state_dir = settings.state_dir
     app.config["PIBOARD_DISPLAY"] = create_display_manager(
         settings.display_backend,
         state_dir=state_dir,

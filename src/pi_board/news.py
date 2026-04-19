@@ -7,12 +7,15 @@ We cache aggressively and refresh only when cache is stale.
 from __future__ import annotations
 
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 # Default categories with their NewsData.io query params
 # Using country=us,gb,ca,au to focus on English-speaking western countries
@@ -152,7 +155,8 @@ class NewsService:
                 next_page=data.get("next_page"),
                 fetched_at=data.get("fetched_at", 0),
             )
-        except Exception:
+        except Exception as exc:
+            logger.warning("Failed to load cache for %s page=%s: %s", feed_key, page, exc)
             return None
 
     def _save_cache(self, feed: CachedFeed, page: str | None = None) -> None:
@@ -176,7 +180,7 @@ class NewsService:
         params: dict[str, str] = {"apikey": self.api_key}
 
         # Add feed-specific params
-        for key in ("q", "qInTitle", "category", "country", "language"):
+        for key in ("q", "qInTitle", "category", "country", "language", "prioritydomain"):
             if key in feed_config:
                 params[key] = feed_config[key]
 
@@ -188,18 +192,22 @@ class NewsService:
         if page:
             params["page"] = page
 
-        # Remove duplicates, prioritize quality sources
+        # Remove duplicates; respect per-feed prioritydomain, default to "medium"
         params["removeduplicate"] = "1"
-        params["prioritydomain"] = "medium"
+        params.setdefault("prioritydomain", "medium")
 
         try:
             resp = requests.get(NEWSDATA_BASE_URL, params=params, timeout=15)
             resp.raise_for_status()
             data = resp.json()
-        except Exception:
+        except Exception as exc:
+            logger.warning("API request failed for feed %s: %s", feed_key, exc)
             return [], None
 
         if data.get("status") != "success":
+            logger.warning(
+                "API returned non-success status for feed %s: %s", feed_key, data.get("status")
+            )
             return [], None
 
         results = data.get("results") or []
@@ -215,13 +223,14 @@ class NewsService:
         cached = self._load_cache(feed_key, page)
 
         if cached and not force_refresh and not cached.is_stale(self.cache_max_age_seconds):
+            logger.debug("Cache hit for feed %s page=%s", feed_key, page)
             return cached
 
-        # Fetch fresh data
+        logger.debug("Fetching fresh data for feed %s page=%s", feed_key, page)
         articles, next_page = self._fetch_from_api(feed_key, page)
 
         if not articles and cached:
-            # API failed but we have stale cache - use it
+            logger.info("API returned no articles for %s, using stale cache", feed_key)
             return cached
 
         feed = CachedFeed(
@@ -241,7 +250,8 @@ class NewsService:
                 for a in data.get("articles", []):
                     if a.get("article_id") == article_id:
                         return Article.from_dict(a)
-            except Exception:
+            except Exception as exc:
+                logger.debug("Skipping cache file %s: %s", cache_file, exc)
                 continue
         return None
 

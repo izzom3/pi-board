@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -7,6 +9,8 @@ from typing import Literal
 from pi_board.images import prepare_for_display
 
 from .backends import DisplayBackend, DummyBackend, FbiBackend, FehBackend
+
+logger = logging.getLogger(__name__)
 
 BackendName = Literal["feh", "fbi", "dummy"]
 
@@ -30,6 +34,21 @@ class DisplayManager:
         prepared = self._prepare_many(paths)
         self.backend.start_slideshow(paths=prepared, delay_seconds=delay_seconds, shuffle=shuffle)
 
+    def is_running(self) -> bool:
+        if not hasattr(self.backend, "_read_pid"):
+            return False
+        pid = self.backend._read_pid()  # type: ignore[attr-defined]
+        if pid is None:
+            return False
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
+
+    def backend_label(self) -> str:
+        return type(self.backend).__name__.replace("Backend", "").lower()
+
     def _prepare_one(self, path: Path) -> Path:
         try:
             return prepare_for_display(
@@ -39,7 +58,8 @@ class DisplayManager:
                 target_size=self.target_size,
                 fit_mode=self.fit_mode,
             )
-        except Exception:
+        except Exception as exc:
+            logger.warning("Failed to preprocess %s, using original: %s", path.name, exc)
             return path
 
     def _prepare_many(self, paths: list[Path]) -> list[Path]:

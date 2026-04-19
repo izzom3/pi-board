@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 import os
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
+
+logger = logging.getLogger(__name__)
 
 
 class DisplayBackend(Protocol):
@@ -81,16 +84,20 @@ class FehBackend(_BaseBackend):
     def show_single(self, path: Path) -> None:
         self.stop()
         cmd = ["feh", "-Y", "-x", "-Z", "-F", str(path)]
+        logger.info("feh show_single: %s", path.name)
         proc = subprocess.Popen(cmd)
         self._save_pid(proc.pid)
 
     def start_slideshow(self, *, paths: list[Path], delay_seconds: int, shuffle: bool) -> None:
         self.stop()
         self._write_list_file(paths)
-        cmd = ["feh", "-Y", "-x", "-D", str(delay_seconds), "-Z", "-F", "-f", str(self.list_file)]
-        if not shuffle:
-            # feh defaults to list order; no extra flag needed
-            pass
+        cmd = ["feh", "-Y", "-x", "-D", str(delay_seconds), "-Z", "-F"]
+        if shuffle:
+            cmd.append("-z")  # randomize order
+        cmd.extend(["-f", str(self.list_file)])
+        logger.info(
+            "feh slideshow: %d images, delay=%ds, shuffle=%s", len(paths), delay_seconds, shuffle
+        )
         proc = subprocess.Popen(cmd)
         self._save_pid(proc.pid)
 
@@ -106,6 +113,7 @@ class FbiBackend(_BaseBackend):
     def show_single(self, path: Path) -> None:
         self.stop()
         cmd = ["fbi", "-a", "-T", "1", "-noverbose", str(path)]
+        logger.info("fbi show_single: %s", path.name)
         proc = subprocess.Popen(cmd)
         self._save_pid(proc.pid)
 
@@ -113,15 +121,9 @@ class FbiBackend(_BaseBackend):
         self.stop()
         self._write_list_file(paths)
         cmd = [
-            "fbi",
-            "-a",
-            "-T",
-            "1",
-            "-t",
-            str(delay_seconds),
-            "-noverbose",
-            "-l",
-            str(self.list_file),
+            "fbi", "-a", "-T", "1", "-t", str(delay_seconds), "-noverbose",
+            "-l", str(self.list_file),
         ]
+        logger.info("fbi slideshow: %d images, delay=%ds", len(paths), delay_seconds)
         proc = subprocess.Popen(cmd)
         self._save_pid(proc.pid)

@@ -1,0 +1,18 @@
+[Unit]
+Description=Pi-Board Flask Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=mattizzo
+WorkingDirectory=/home/mattizzo/projects/pi-board
+Environment="PATH=/home/mattizzo/projects/pi-board/.venv/bin"
+# Optionally override state/poster dirs:
+# Environment="PIBOARD_STATE_DIR=/home/mattizzo/.piboard"
+# Environment="PIBOARD_POSTERS_DIR=/home/mattizzo/posters"
+ExecStart=/home/mattizzo/projects/pi-board/.venv/bin/flask --app pi_board.web run --host 0.0.0.0 --port 5000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -5,19 +5,16 @@ Pi-Board is a self-hosted dashboard intended to run on a Raspberry Pi (but it al
 Right now it ships working **Poster** and **News** apps:
 
 ### Poster App
-- Upload/delete posters
-- Start slideshow (shuffle all)
-- Start slideshow from a custom selection
-- Show a single poster
+- Upload/delete posters (PNG, JPG, JPEG, WEBP)
+- Start slideshow — shuffle all, custom playlist, or single poster
 - Stop slideshow
 - Auto-rotates and scales to fit your (possibly rotated) display
 
 ### News App
 - Fetches headlines from NewsData.io (free tier: 200 credits/day)
-- Pre-configured feeds: Technology, Gaming, US News
+- Pre-configured feeds: Technology, Gaming, US News, MLB, Film & TV
 - Caches results to minimize API calls (default: 30 min)
-- **Display Mode**: Full-screen article slideshow for your wall display
-- Large, readable titles designed for viewing from a few feet away
+- **Display Mode**: Full-screen article slideshow for your wall display with 15-second auto-advance
 
 ## Quickstart (dev)
 
@@ -38,42 +35,86 @@ Then open:
 - http://localhost:5000
 - or from another device on your LAN: `http://<pi-ip>:5000`
 
-## Running on the Pi (recommended)
+## Running on the Pi
 
-For showing images full-screen, Pi-Board uses an external viewer backend.
+For showing images full-screen, Pi-Board uses an external image viewer.
 
-### Backend options
-- **feh** (recommended if you run a desktop / X11 / Wayland): `sudo apt install feh`
-- **fbi** (framebuffer console, no desktop): `sudo apt install fbi`
+### Display backend options
+- **`feh`** — recommended if you run Raspberry Pi OS Desktop (X11). `sudo apt install feh`
+- **`fbi`** — framebuffer console only (no desktop). `sudo apt install fbi`
 
-Select backend via env var:
-- `PIBOARD_DISPLAY_BACKEND=feh` (default)
-- `PIBOARD_DISPLAY_BACKEND=fbi`
+> **Important:** `fbi` will not work if a desktop environment is running. Use `feh` on Pi OS Desktop.
+
+Set backend in `.env`:
+```
+PIBOARD_DISPLAY_BACKEND=feh
+```
+
+### Auto-start with systemd
+
+```bash
+sudo cp deploy/pi-board.service /etc/systemd/system/
+sudo systemctl enable pi-board.service
+sudo systemctl start pi-board.service
+
+# Follow logs
+sudo journalctl -u pi-board -f
+```
 
 ## Configuration
 
-Set these environment variables (or put them in `.env`):
+Set in `.env` (copy from `.env.example`):
 
 ### General
-- `PIBOARD_HOST` (default: `0.0.0.0`)
-- `PIBOARD_PORT` (default: `5000`)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PIBOARD_HOST` | `0.0.0.0` | Bind address |
+| `PIBOARD_PORT` | `5000` | |
 
 ### Posters / Display
-- `PIBOARD_POSTERS_DIR` (default: `./posters`)
-- `PIBOARD_DISPLAY_BACKEND` (`feh` | `fbi` | `dummy`)
-- `PIBOARD_SLIDESHOW_DELAY_SECONDS` (default: `10`)
-- `PIBOARD_ROTATE_DEGREES_CLOCKWISE` (default: `90`)
-- `PIBOARD_FIT_MODE` (`stretch` | `cover` | `contain`, default: `stretch`)
-- `PIBOARD_SCREEN_WIDTH` / `PIBOARD_SCREEN_HEIGHT` (optional overrides)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PIBOARD_POSTERS_DIR` | `./posters` | Where uploaded posters are stored |
+| `PIBOARD_STATE_DIR` | `./.piboard` | PID files, image cache, news cache |
+| `PIBOARD_DISPLAY_BACKEND` | `feh` | `feh` \| `fbi` \| `dummy` |
+| `PIBOARD_SLIDESHOW_DELAY_SECONDS` | `10` | Seconds between poster transitions |
+| `PIBOARD_ROTATE_DEGREES_CLOCKWISE` | `90` | For a physically rotated portrait monitor |
+| `PIBOARD_FIT_MODE` | `stretch` | `stretch` \| `cover` \| `contain` |
+| `PIBOARD_SCREEN_WIDTH` / `PIBOARD_SCREEN_HEIGHT` | (auto-detected) | Override screen size |
 
 ### News
-- `PIBOARD_NEWSDATA_API_KEY` — Get your free key at https://newsdata.io
-- `PIBOARD_NEWS_CACHE_MAX_AGE_SECONDS` (default: `1800` = 30 min)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PIBOARD_NEWSDATA_API_KEY` | — | Get a free key at https://newsdata.io |
+| `PIBOARD_NEWS_CACHE_MAX_AGE_SECONDS` | `1800` | 30 min |
+
+## API
+
+`GET /api/status` — returns current display state and news cache summary. Useful for debugging from a phone without opening the full UI.
+
+```json
+{
+  "display": {"backend": "feh", "running": true},
+  "news": {
+    "technology": {"cached": true, "stale": false, "article_count": 10, "age_seconds": 342}
+  },
+  "settings": {"display_backend": "feh", "rotate_degrees_clockwise": 90, "fit_mode": "stretch", "slideshow_delay_seconds": 10}
+}
+```
+
+## Development
+
+```bash
+pytest                          # run all tests
+ruff check . && ruff format .   # lint + format
+rm -rf .piboard/rotated/* .piboard/news_cache/*   # clear caches
+```
 
 ## Notes
 
-- Do **not** commit copyrighted posters to git. The repo ignores common image extensions by default.
-- The `todo` and `calendar` apps are placeholders for now.
+- Do **not** commit copyrighted posters to git. The repo ignores common image extensions.
+- The `todo` and `calendar` apps are placeholders.
+- No authentication — designed for trusted local networks only.
 
 ## License
 

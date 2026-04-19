@@ -4,10 +4,14 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
+*.egg-info/
 .pytest_cache/
 .ruff_cache/
 .venv/
 .piboard/
+
+# Scratch files
+newsdataioinfo.txt
 
 # Env
 .env

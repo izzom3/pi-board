@@ -23,6 +23,7 @@ class Settings:
     host: str
     port: int
     posters_dir: Path
+    state_dir: Path
     display_backend: str
     slideshow_delay_seconds: int
     rotate_degrees_clockwise: int
@@ -39,6 +40,7 @@ def load_settings() -> Settings:
     host = os.getenv("PIBOARD_HOST", "0.0.0.0")
     port = _env_int("PIBOARD_PORT", 5000)
     posters_dir = Path(os.getenv("PIBOARD_POSTERS_DIR", "./posters")).expanduser().resolve()
+    state_dir = Path(os.getenv("PIBOARD_STATE_DIR", ".piboard")).expanduser().resolve()
     display_backend = os.getenv("PIBOARD_DISPLAY_BACKEND", "feh").strip().lower()
     slideshow_delay_seconds = _env_int("PIBOARD_SLIDESHOW_DELAY_SECONDS", 10)
     rotate_degrees_clockwise = _env_int("PIBOARD_ROTATE_DEGREES_CLOCKWISE", 90)
@@ -60,6 +62,7 @@ def load_settings() -> Settings:
         host=host,
         port=port,
         posters_dir=posters_dir,
+        state_dir=state_dir,
         display_backend=display_backend,
         slideshow_delay_seconds=slideshow_delay_seconds,
         rotate_degrees_clockwise=rotate_degrees_clockwise,

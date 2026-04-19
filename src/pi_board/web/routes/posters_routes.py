@@ -4,7 +4,6 @@ import secrets
 from pathlib import Path
 
 from flask import (
-    Blueprint,
     current_app,
     jsonify,
     redirect,
@@ -16,7 +15,7 @@ from flask import (
 
 from pi_board.posters import list_posters, safe_join_posters_dir
 
-bp = Blueprint("piboard", __name__)
+from . import bp
 
 
 def _posters_dir() -> Path:
@@ -25,10 +24,6 @@ def _posters_dir() -> Path:
 
 def _display():
     return current_app.config["PIBOARD_DISPLAY"]
-
-
-def _news():
-    return current_app.config["PIBOARD_NEWS"]
 
 
 def _settings():
@@ -50,7 +45,7 @@ def placeholder_app(app_name: str):
 
 @bp.get("/media/posters/<path:filename>")
 def media_poster(filename: str):
-    # send_from_directory protects against traversal, but we also keep allowed-extension constraints
+    # send_from_directory guards against traversal; we add extension allow-list on top
     safe_join_posters_dir(_posters_dir(), filename)
     return send_from_directory(_posters_dir(), filename)
 
@@ -70,7 +65,6 @@ def posters_upload():
     except ValueError:
         return redirect(url_for("piboard.home"))
 
-    # avoid overwriting by default
     if target.exists():
         stem = target.stem
         suffix = target.suffix
@@ -112,7 +106,7 @@ def api_display_start():
     delay = data.get("delay_seconds")
     shuffle = bool(data.get("shuffle", True))
 
-    settings = current_app.config["PIBOARD_SETTINGS"]
+    settings = _settings()
     delay_seconds = (
         int(delay)
         if isinstance(delay, (int, float, str)) and str(delay).isdigit()
@@ -126,7 +120,7 @@ def api_display_start():
         import random
 
         random.shuffle(poster_paths)
-        _display().start_slideshow(paths=poster_paths, delay_seconds=delay_seconds, shuffle=True)
+        _display().start_slideshow(paths=poster_paths, delay_seconds=delay_seconds, shuffle=False)
         return jsonify({"status": "started", "mode": "random", "count": len(poster_paths)})
 
     if mode == "playlist":
@@ -167,119 +161,3 @@ def api_display_start():
         return jsonify({"status": "started", "mode": "single", "poster": path.name})
 
     return jsonify({"error": "invalid mode"}), 400
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# News routes
-# ─────────────────────────────────────────────────────────────────────────────
-
-
-@bp.get("/news")
-def news_home():
-    """News landing page: shows summary of all feeds."""
-    news = _news()
-    settings = _settings()
-    feeds = news.get_all_feeds_summary()
-
-    feed_data = []
-    for key in news.get_feed_keys():
-        feed = feeds.get(key)
-        feed_data.append(
-            {
-                "key": key,
-                "label": news.get_feed_label(key),
-                "articles": feed.articles[:3] if feed else [],
-            }
-        )
-
-    return render_template(
-        "news/home.html",
-        feeds=feed_data,
-        rotate=settings.rotate_degrees_clockwise,
-    )
-
-
-@bp.get("/news/feed/<feed_key>")
-def news_feed(feed_key: str):
-    """Full feed page with all articles."""
-    news = _news()
-    settings = _settings()
-
-    if feed_key not in news.get_feed_keys():
-        return redirect(url_for("piboard.news_home"))
-
-    page = request.args.get("page")
-    feed = news.get_feed(feed_key, page=page)
-
-    return render_template(
-        "news/feed.html",
-        feed_key=feed_key,
-        feed_label=news.get_feed_label(feed_key),
-        articles=feed.articles,
-        next_page=feed.next_page,
-        rotate=settings.rotate_degrees_clockwise,
-    )
-
-
-@bp.get("/news/article/<article_id>")
-def news_article(article_id: str):
-    """Single article view for reading."""
-    news = _news()
-    settings = _settings()
-    article = news.get_article(article_id)
-
-    if not article:
-        return redirect(url_for("piboard.news_home"))
-
-    return render_template(
-        "news/article.html",
-        article=article,
-        rotate=settings.rotate_degrees_clockwise,
-    )
-
-
-@bp.get("/news/display/<feed_key>")
-def news_display(feed_key: str):
-    """Display mode: full-screen article slideshow for the rotated monitor."""
-    news = _news()
-    settings = _settings()
-
-    if feed_key not in news.get_feed_keys():
-        return redirect(url_for("piboard.news_home"))
-
-    feed = news.get_feed(feed_key)
-    index = request.args.get("index", "0")
-    try:
-        idx = int(index) % len(feed.articles) if feed.articles else 0
-    except ValueError:
-        idx = 0
-
-    article = feed.articles[idx] if feed.articles else None
-    total = len(feed.articles)
-
-    return render_template(
-        "news/display.html",
-        feed_key=feed_key,
-        feed_label=news.get_feed_label(feed_key),
-        article=article,
-        index=idx,
-        total=total,
-        rotate=settings.rotate_degrees_clockwise,
-    )
-
-
-@bp.post("/api/news/refresh")
-def api_news_refresh():
-    """Force refresh a specific feed or all feeds."""
-    news = _news()
-    data = request.get_json(silent=True) or {}
-    feed_key = data.get("feed_key")
-
-    if feed_key:
-        if feed_key not in news.get_feed_keys():
-            return jsonify({"error": "unknown feed"}), 400
-        news.get_feed(feed_key, force_refresh=True)
-        return jsonify({"status": "refreshed", "feed": feed_key})
-
-    news.get_all_feeds_summary(force_refresh=True)
-    return jsonify({"status": "refreshed", "feed": "all"})
