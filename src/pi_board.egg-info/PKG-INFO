@@ -9,6 +9,7 @@ Description-Content-Type: text/markdown
 Requires-Dist: Flask>=3.0.0
 Requires-Dist: Pillow>=10.0.0
 Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: requests>=2.31.0
 Provides-Extra: dev
 Requires-Dist: pytest>=8.0.0; extra == "dev"
 Requires-Dist: ruff>=0.6.0; extra == "dev"
@@ -61,6 +62,8 @@ Set these environment variables (or put them in `.env`):
 - `PIBOARD_DISPLAY_BACKEND` (`feh` | `fbi` | `dummy`)
 - `PIBOARD_SLIDESHOW_DELAY_SECONDS` (default: `10`)
 - `PIBOARD_ROTATE_DEGREES_CLOCKWISE` (default: `90`)
+- `PIBOARD_FIT_MODE` (`stretch` | `cover` | `contain`, default: `stretch`)
+- `PIBOARD_SCREEN_WIDTH` / `PIBOARD_SCREEN_HEIGHT` (optional overrides)
 - `PIBOARD_HOST` (default: `0.0.0.0`)
 - `PIBOARD_PORT` (default: `5000`)
 

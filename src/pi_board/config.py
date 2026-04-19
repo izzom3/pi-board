@@ -29,6 +29,8 @@ class Settings:
     screen_width: int | None
     screen_height: int | None
     fit_mode: str
+    newsdata_api_key: str
+    news_cache_max_age_seconds: int
 
 
 def load_settings() -> Settings:
@@ -51,6 +53,9 @@ def load_settings() -> Settings:
 
     fit_mode = os.getenv("PIBOARD_FIT_MODE", "stretch").strip().lower()
 
+    newsdata_api_key = os.getenv("PIBOARD_NEWSDATA_API_KEY", "").strip()
+    news_cache_max_age_seconds = _env_int("PIBOARD_NEWS_CACHE_MAX_AGE_SECONDS", 1800)
+
     return Settings(
         host=host,
         port=port,
@@ -61,4 +66,6 @@ def load_settings() -> Settings:
         screen_width=screen_width,
         screen_height=screen_height,
         fit_mode=fit_mode,
+        newsdata_api_key=newsdata_api_key,
+        news_cache_max_age_seconds=news_cache_max_age_seconds,
     )

@@ -80,6 +80,15 @@ const PiBoard = (() => {
     window.location.reload();
   }
 
+  async function refreshNews(feedKey) {
+    try {
+      await postJson('/api/news/refresh', feedKey ? { feed_key: feedKey } : {});
+      window.location.reload();
+    } catch (err) {
+      alert('Failed to refresh news: ' + err.message);
+    }
+  }
+
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       selected.clear();
@@ -90,5 +99,5 @@ const PiBoard = (() => {
 
   window.addEventListener('load', updateButtons);
 
-  return { toggle, startRandom, startSelected, showSingle, stop, deletePoster };
+  return { toggle, startRandom, startSelected, showSingle, stop, deletePoster, refreshNews };
 })();

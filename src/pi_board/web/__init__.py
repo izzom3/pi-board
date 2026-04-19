@@ -7,6 +7,7 @@ from flask import Flask
 
 from pi_board.config import load_settings
 from pi_board.display.manager import create_display_manager
+from pi_board.news import NewsService
 
 
 def create_app() -> Flask:
@@ -33,6 +34,14 @@ def create_app() -> Flask:
     )
 
     settings.posters_dir.mkdir(parents=True, exist_ok=True)
+
+    # News service
+    news_cache_dir = state_dir / "news_cache"
+    app.config["PIBOARD_NEWS"] = NewsService(
+        api_key=settings.newsdata_api_key,
+        cache_dir=news_cache_dir,
+        cache_max_age_seconds=settings.news_cache_max_age_seconds,
+    )
 
     from .routes import bp
 

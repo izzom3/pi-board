@@ -3,7 +3,9 @@ pyproject.toml
 src/pi_board/__init__.py
 src/pi_board/config.py
 src/pi_board/images.py
+src/pi_board/news.py
 src/pi_board/posters.py
+src/pi_board/screen.py
 src/pi_board.egg-info/PKG-INFO
 src/pi_board.egg-info/SOURCES.txt
 src/pi_board.egg-info/dependency_links.txt

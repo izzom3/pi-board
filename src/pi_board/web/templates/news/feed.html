@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card news-feed-page {% if rotate == 90 or rotate == 270 %}rotated{% endif %}">
+  <div class="news-header">
+    <a href="{{ url_for('piboard.news_home') }}" class="back-link">← Back</a>
+    <h1>{{ feed_label }}</h1>
+    <a href="{{ url_for('piboard.news_display', feed_key=feed_key) }}" class="btn-small accent">Display Mode</a>
+  </div>
+
+  {% if articles %}
+  <div class="news-list">
+    {% for article in articles %}
+    <a href="{{ url_for('piboard.news_article', article_id=article.article_id) }}" class="news-list-item">
+      {% if article.image_url %}
+      <div class="news-list-image" style="background-image: url('{{ article.image_url }}')"></div>
+      {% else %}
+      <div class="news-list-image no-image">📰</div>
+      {% endif %}
+      <div class="news-list-content">
+        <div class="news-list-title">{{ article.title }}</div>
+        {% if article.description %}
+        <div class="news-list-desc">{{ article.description[:150] }}{% if article.description|length > 150 %}...{% endif %}</div>
+        {% endif %}
+        <div class="news-list-meta">
+          {% if article.source_name %}{{ article.source_name }}{% endif %}
+          {% if article.pub_date %} • {{ article.pub_date[:16] }}{% endif %}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if next_page %}
+  <div class="load-more">
+    <a href="{{ url_for('piboard.news_feed', feed_key=feed_key, page=next_page) }}" class="btn">Load Next 10</a>
+  </div>
+  {% endif %}
+
+  {% else %}
+  <p class="muted">No articles available.</p>
+  {% endif %}
+</section>
+{% endblock %}

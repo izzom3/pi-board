@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ feed_label }} - Pi-Board Display</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --text: #e6eaf2;
+      --muted: #7a8599;
+      --accent: #6aa6ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+    }
+
+    .display-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display-container.rotate-90,
+    .display-container.rotate-270 {
+      transform-origin: center center;
+      width: 100vh;
+      height: 100vw;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: calc(-50vw);
+      margin-left: calc(-50vh);
+    }
+
+    .display-container.rotate-90 {
+      transform: rotate(90deg);
+    }
+
+    .display-container.rotate-270 {
+      transform: rotate(270deg);
+    }
+
+    .display-header {
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .display-header h2 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .display-nav {
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    .display-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 40px;
+      overflow: hidden;
+    }
+
+    .display-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      /* Large enough to read from a few feet away */
+    }
+
+    .display-image {
+      flex: 1;
+      min-height: 200px;
+      max-height: 50%;
+      border-radius: 16px;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(255,255,255,0.03);
+      margin-bottom: 20px;
+    }
+
+    .display-description {
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      line-height: 1.5;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+
+    .display-meta {
+      margin-top: auto;
+      padding-top: 20px;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    .display-controls {
+      padding: 20px 30px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .display-controls a, .display-controls button {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .display-controls a:hover, .display-controls button:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .no-article {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      font-size: 1.5rem;
+      color: var(--muted);
+    }
+
+    /* Auto-advance script styling */
+    .auto-progress {
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      transition: width linear;
+    }
+  </style>
+</head>
+<body>
+  <div class="display-container{% if rotate == 90 %} rotate-90{% elif rotate == 270 %} rotate-270{% endif %}">
+    <div class="auto-progress" id="progress"></div>
+
+    <div class="display-header">
+      <h2>{{ feed_label }}</h2>
+      <div class="display-nav">
+        {% if article %}{{ index + 1 }} / {{ total }}{% endif %}
+      </div>
+    </div>
+
+    <div class="display-main">
+      {% if article %}
+        <div class="display-title">{{ article.title }}</div>
+
+        {% if article.image_url %}
+        <div class="display-image" style="background-image: url('{{ article.image_url }}')"></div>
+        {% endif %}
+
+        {% if article.description %}
+        <div class="display-description">{{ article.description }}</div>
+        {% endif %}
+
+        <div class="display-meta">
+          {% if article.source_name %}{{ article.source_name }}{% endif %}
+          {% if article.pub_date %} • {{ article.pub_date[:16] }}{% endif %}
+        </div>
+      {% else %}
+        <div class="no-article">No articles available</div>
+      {% endif %}
+    </div>
+
+    <div class="display-controls">
+      <a href="{{ url_for('piboard.news_display', feed_key=feed_key, index=(index - 1) if index > 0 else (total - 1)) }}">← Prev</a>
+      <button id="toggleAuto">⏸ Pause</button>
+      <a href="{{ url_for('piboard.news_display', feed_key=feed_key, index=(index + 1) % total) }}">Next →</a>
+      <a href="{{ url_for('piboard.news_home') }}">✕ Exit</a>
+    </div>
+  </div>
+
+  <script>
+    const DELAY = 15000; // 15 seconds per article
+    let autoAdvance = true;
+    let timer = null;
+    const progress = document.getElementById('progress');
+    const toggleBtn = document.getElementById('toggleAuto');
+    const nextIndex = Number('{{ ((index + 1) % total) if total else 0 }}');
+    const feedKey = '{{ feed_key }}';
+
+    function startTimer() {
+      progress.style.transition = 'none';
+      progress.style.width = '0%';
+      // Force reflow
+      void progress.offsetWidth;
+      progress.style.transition = `width ${DELAY}ms linear`;
+      progress.style.width = '100%';
+
+      timer = setTimeout(() => {
+        if (autoAdvance) {
+          window.location.href = `/news/display/${feedKey}?index=${nextIndex}`;
+        }
+      }, DELAY);
+    }
+
+    function stopTimer() {
+      if (timer) clearTimeout(timer);
+      progress.style.transition = 'none';
+      progress.style.width = '0%';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      autoAdvance = !autoAdvance;
+      toggleBtn.textContent = autoAdvance ? '⏸ Pause' : '▶ Play';
+      if (autoAdvance) {
+        startTimer();
+      } else {
+        stopTimer();
+      }
+    });
+
+    // Start auto-advance
+    const hasArticle = JSON.parse('{{ (article is not none) | tojson }}');
+    if (hasArticle) {
+      startTimer();
+    }
+  </script>
+</body>
+</html>

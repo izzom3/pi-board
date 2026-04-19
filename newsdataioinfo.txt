@@ -1,0 +1,2954 @@
+Authentication
+NewsData.io uses API key authentication to access the platform's features and data. An API key is a unique string of characters that is generated for each account, and it is required in all requests to the API.
+When making requests to the API, you need to include the API key in the request URL. The API key can be passed as a request header as X-ACCESS-KEY or as a query parameter apikey.
+If the API key is not included in the request headers or it is invalid, the API will return a 403 Unauthorized error and the request will be denied.
+
+Response Object
+You will get the following data points in JSON response while requesting the API.
+Object	Description
+Status
+Status shows the status of your request. If the request was successful then it shows “success”, in case of error it shows “error”. In the case of error a code and message property will be displayed.
+totalResults
+The total number of results available for your request.
+article_id
+A unique id for each news article.
+title
+The title of the news article.
+link
+URL of the news article.
+source_id
+The unique ID of the source this article came from.
+source_name
+The name of the source this article came from.
+source_url
+The URL of the source from which a specific news article originated.
+source_icon
+URL of the logo associated with the news source.
+source_priority
+Shows the rank of news domains on the basis of their traffic and authenticity. The lower the source priority, the more authentic the domain.
+keywords
+Related keywords of the news article.
+creator
+The author of the news article
+image_url
+URL of image present in the news articles
+video_url
+URL of video present in the news articles
+description
+A small description of the news article
+pubDate
+The published date of the news article
+pubDateTZ
+The 'pubDateTZ' field will provide the time zone of the publication date mentioned in the news article. This is available in the Latest/News, Crypto, and Archive endpoints.
+content
+Full content of the news article
+country
+The country of the publisher
+category
+The category assigned to the news article by NewsData.io
+datatype
+Indicates the article category. Possible values: news, blog, multimedia, forum, press release, review, research, opinion, analysis, and podcast.
+fetched_at
+The timestamp indicating when the article was fetched by NewsData.io.
+language
+The language of the news article
+ai_tag
+AI-classified tags or categories for a better understanding of the article. (Available only for Professional and Corporate users)
+sentiment
+The overall sentiment of the news article (positive, negative, neutral). (Available only for Professional and Corporate users)
+sentiment_stats
+Statistics on the distribution of positive, negative, and neutral sentiments of the news article. (Available only for Professional and Corporate users)
+ai_region
+AI-classified geographical region associated with a news article. ai_region could be a city, district, state, country, or continent. (Available only for corporate users)
+ai_org
+AI-classified organization to extract the name of the organization mentioned in the new article to offer a new level of detail and enhanced insights. (Available only for corporate users)
+symbol
+The name of stock symbols or tickers mentioned in the news article.
+duplicate
+This response object will help identify whether the article is duplicate or not. duplicate = False: This indicates that the article is recognized as unique duplicate = True: This signifies that the article is identified as a duplicate of an article already present(The duplicate response object is defined on the basis of Newsdata.io's internal algorithm . It doesn't imply that the article which has a duplicate=true response object is actually a duplicate article.)
+Coin
+The 'coin' field will provide the symbol of the cryptocurrencies mentioned in the article. It is exclusively available in the Crypto endpoint.
+ai_summary
+A concise, AI-generated summary of the news article. Designed to help users quickly understand the essence of an article without reading the entire content. (Available only for Paid users)
+nextPage
+To go to the next page, copy the next page code (without quotes), which can be found at the bottom of the page, and add a new parameter with page and paste the next page code in the API URL: https://newsdata.io/api/1/latest?apikey=pub_3d9bd1d5c47c489dbe378e29043de85e&q=pizza%20OR%20social&page=Your_next_page_id
+
+Authentication
+NewsData.io uses API key authentication to access the platform's features and data. An API key is a unique string of characters that is generated for each account, and it is required in all requests to the API.
+When making requests to the API, you need to include the API key in the request URL. The API key can be passed as a request header as X-ACCESS-KEY or as a query parameter apikey.
+If the API key is not included in the request headers or it is invalid, the API will return a 403 Unauthorized error and the request will be denied.
+
+"q", "qInTitle" and "qInMeta" Advanced Search
+There are various ways to search for a topic or an event at NewsData.io. These filters enable the users to narrow down the search and get accurate results. Please refer the table below to understand all the filters you can use with "q", "qInTitle" or "qInMeta" parameters:
+Description	Example
+While searching for a single keyword
+q=social
+While searching for an exact phrase
+q=”social pizza”
+While searching for two keywords or more in the same news article
+q=social AND pizza AND pasta
+When searching for a keyword but need to exclude another keyword
+q=social NOT pizza
+while searching for a keyword but need to exclude multiple keywords
+q=social NOT (pizza AND wildfire)
+While searching for articles containing any one of the keywords.
+q=social OR pizza OR pasta
+The NOT parameter can be used in the OR operators as well. While searching any one of the keywords between two keywords and excluding one keyword.
+q=(pizza OR social) NOT pasta
+
+Rate Limit
+NewsData.io API has a rate limit, which is the number of requests that can be made to the API within a certain time period. The rate limit is in place to ensure that the API is available for all users and to prevent any one user from overloading the system.
+The specific rate limit for the API varies depending on the plan you have subscribed to. For example, a free plan may have a lower rate limit than a paid plan.
+The API limit you get for different plans is as follows:
+Free Plan: 30 credits every 15 minutes.
+Paid plans: 1800 credits every 15 minutes.
+If you exceed the rate limit for your plan, the API will return a "Rate Limit Exceeded" error and you will not be able to make any further requests until the rate limit resets after 15 minutes.
+There is a 200/day API Credit for the free tier.
+
+Latest News ("latest" endpoint)
+The latest news endpoint provides access to the latest and breaking news. The news articles are sorted by the published date. With the "Latest" endpoint, you can access the news articles up to the past 48 hours.
+Retrieving the latest news allows you to build experience such as showcasing the latest news, breaking news tickers and analyzing News to better understand their content.
+Note: For Free users, news articles are delayed by 12 hours.
+Resource URL
+https://newsdata.io/api/1/latest?apikey=pub_3d9bd1d5c47c489dbe378e29043de85e
+Resource Information
+
+Response Format
+JSON
+Requires Authentication
+Yes
+Rate Limited
+Yes
+Requests per 15 min window
+1800 credits (paid plans)
+Parameters
+Below are the Request Parameters you need to put in your query to run the API.
+
+Name	Required	Description	Default Value	Example
+apikey
+Required
+You need to add your API Key while accessing the newsdata API. 
+How to get the NewsData.io API key.
+id
+Optional
+Search the specific news article from its unique article_id string. You can add up to 50 article id strings in a single query or as per your specified limit.
+id=article_id
+id=article_id_1,article_id_2,
+article_id_3
+q
+Optional
+Search news articles for specific keywords or phrases present in the news title, content, URL, meta keywords and meta description. The value must be URL-encoded and the maximum character limit permitted is 512 characters.
+Please refer Advanced Search for more details
+q=pizza
+qInTitle
+Optional
+Search news articles for specific keywords or phrases present in the news titles only. The value must be URL-encoded and the maximum character limit permitted is 512 characters.
+Note: qInTitle can't be used with q or qInMeta parameter in the same query.
+qInTitle=pizza
+qInMeta
+Optional
+Search news articles for specific keywords or phrases present in the news titles, URL, meta keywords and meta description only. The value must be URL-encoded and the maximum character limit permitted is 512 characters.
+Note: qInMeta can't be used with q or qInTitle parameter in the same query.
+qInMeta=pizza
+timeframe
+Optional
+Search the news articles for a specific timeframe (Minutes and Hours). For hours, you can set a timeframe of 1 to 48, and for minutes, you can define a timeframe of 1m to 2880m. For example, if you want to get the news for the past 6 hours then use timeframe=6 and if you want to get news for the last 15 min then use timeframe=15m.
+Note - You can only use timeframe either in hours or minutes.
+For Hours -
+timeframe=1
+timeframe=6
+timeframe=24
+For Minutes -
+timeframe=15m
+timeframe=45m
+timeframe=90m
+country
+Optional
+Search news articles from specific countries. Include up to 5 countries per query on Free and Basic plans. Professional and Corporate plans support up to 10 countries.
+Check the codes for all the countries here.
+country=au,jp
+excludecountry
+Optional
+Exclude news articles from specific countries. Include up to 5 countries per query on Free and Basic plans. Professional and Corporate plans support up to 10 countries.
+Check the codes for all the countries here.
+Note: You can use either the 'country' parameter to include specific countries or the 'excludecountry' parameter to exclude them, but not both simultaneously.
+excludecountry=au,jp
+category
+Optional
+Search the news articles for a specific category. Include up to 5 categories per query on Free and Basic plans. Professional and Corporate plans support up to 10 categories.
+Check the codes for all the categories here.
+category=sports,top
+excludecategory
+Optional
+You can exclude specific categories to search for news articles. Exclude up to 5 categories per query on Free and Basic plans. Professional and Corporate plans support up to 10 categories.
+Note: You can use either the 'category' parameter to include specific categories or the 'excludecategory' parameter to exclude them, but not both simultaneously.
+excludecategory=top
+language
+Optional
+Search the news articles for a specific language. Include up to 5 languages per query on Free and Basic plans. Professional and Corporate plans support up to 10 languages. 
+Check the codes for all the languages here.
+language=fr,en
+excludelanguage
+Optional
+You can exclude specific languages to search for news articles. Exclude up to 5 languages per query on Free and Basic plans. Professional and Corporate plans support up to 10 languages. 
+Note: You can use either the 'language' parameter to include specific languages or the 'excludelanguage' parameter to exclude them, but not both simultaneously.
+excludelanguage=fr,en
+sort
+Optional
+You can sort the search results based on your preferred criteria to organize how news articles appear in the response. You can use the sort parameter with one of the following options: 
+pubdateasc – Sort articles by publish date in ascending order (oldest to newest).
+relevancy – Sort articles by most relevant results first based on your query.
+source – Sort results by source priority (top to low).
+fetched_at - Sort articles by their fetched date.
+Note: By default, results are sorted by publish date (newest first) if no sort parameter is specified.
+sort=relevancy
+sort=fetched_at
+datatype
+Optional
+Specifies the type of the article.
+Supported values: news, blog, multimedia, forum, press_release, review, research, opinion, analysis, podcast. Available for latest and market. Include up to 5 datatype per query on Free and Basic plans. Professional and Corporate plans support up to 10 datatype.
+datatype=news,blog
+sentiment_score
+Optional
+Filters articles by sentiment score. Returns only articles with a sentiment score greater than or equal to the specified value.
+Note: Works only when the sentiment parameter is enabled.
+(Available only for Professional and Corporate users)
+sentiment_score=70
+creator
+Optional
+Search by name of the article author or content creator.
+Include up to 5 creators per query on Free and Basic plans. Professional and Corporate plans support up to 10 creators.
+creator=chintan haria
+creator=liz carolan,luca socci
+url
+Optional
+You can search for a specific news article by providing its URL.
+url=https://newsdata.io/blog/multiple-api-key-newsdata-io
+tag
+Optional
+Search the news articles for specific AI-classified tags. Include up to 10 tags per query.
+(Available only for Professional and Corporate users)
+Check the codes for all the AI tags here.
+With Custom AI Tags (Corporate Yearly Plan only), you can request your own tag to classify articles based on your specific topic or tag
+tag=food,tourism
+sentiment
+Optional
+Search the news articles based on the sentiment of the news article (positive, negative, neutral).
+(Available only for Professional and Corporate users)
+sentiment=positive
+organization
+Optional
+Search the news articles related to specific organizations. Include up to 10 tags per query.
+(Available only Corporate users)
+organization=uber,apple
+region
+Optional
+Search the news articles for specific geographical regions. The region could be a city, district, county, state, country, or continent. Include 5 regions per query, and it can be customized up to 10 regions per query.
+(Available only for Corporate users).
+Check out NewsData.io Region blog for practical understanding.
+region=city1,city2
+region=city1-state1-country1,
+city2-country2
+region=state-country
+region=los
+angeles-california-usa
+region=new york,chicago
+domain
+Optional
+Search the news articles for specific domains or news sources. Include up to 5 domains per query on Free and Basic plans. Professional and Corporate plans support up to 10 domains. 
+You can check the name of the domains here
+domain=nytimes,bbc
+domainurl
+Optional
+Search the news articles for specific domains or news sources. Include up to 5 domains per query on Free and Basic plans. Professional and Corporate plans support up to 10 domains.
+Note: If the domain is incorrect, It will give suggestions in the response
+domainurl=nytimes.com,
+bbc.com,bbc.co.uk
+excludedomain
+Optional
+You can exclude specific domains or news sources to search the news articles. Exclude up to 5 domains per query on Free and Basic plans. Professional and Corporate plans support up to 10 domains.
+Note: If the domain is incorrect, It will give suggestions in the response
+excludedomain=nytimes.com,
+bbc.com,bbc.co.uk
+excludefield
+Optional
+you can limit the response object to search for news articles. You can exclude multiple response objects in a single query.
+Note: You cannot exclude article ID from the response field
+excludefield=pubdate
+excludefield=source_icon,
+pubdate,link
+prioritydomain
+Optional
+Search the news articles only from top news domains. We have categorized prioritydomain in 3 categories.
+Top: Fetches news articles from the top 10% of the news domains
+Medium: Fetches news articles from the top 30% of the news domains. It means it already includes all the news articles of 'top' priority.
+Low: Fetches news articles from the top 50% of the news domains. It means it already includes all the news articles of 'top' and 'medium' priorities.
+prioritydomain=top
+prioritydomain=medium
+prioritydomain=low
+timezone
+Optional
+Search the news articles for a specific timezone. You can add any specific timezone.
+You can check the timezone here
+timezone=America/New_york
+timezone=Asia/Kolkata
+timezone=Asia/Qatar
+timezone=Europe/Berli
+full_content
+Optional
+Search the news articles with full content or without full content. Use '1' for news articles which contain the full_content response object and '0' for news articles which don't contain full_content response object.
+full_content=1
+full_content=0
+image
+Optional
+Search the news articles with featured image or without featured image. Use 1 for articles with featured image and 0 for articles without featured image.
+image=1
+image=0
+video
+Optional
+Search the news articles with videos or without videos. Use 1 for articles with videos and 0 for articles without videos.
+video=1
+video=0
+removeduplicate
+Optional
+The 'removeduplicate' parameter will allow users to filter out duplicate articles. Use 1 to remove duplicate articles.
+(Note: The overall 'removeduplicate' parameter functioning works on the basis of Newsdata.io's internal algorithm. It doesn't imply that the article which has a 'removeduplicate=1' parameter is actually a duplicate article.)
+removeduplicate=1
+size
+Optional
+You can customize the number of articles you get per API request from 1 to 50.
+Free user - 10
+Paid user - 50
+size=25
+page
+Optional
+Use page parameter to navigate to the next page. To know more:
+click here
+Example Queries
+
+1. News from Australia and United States of America
+
+https://newsdata.io/api/1/latest?apikey=pub_3d9bd1d5c47c489dbe378e29043de85e&country=au,us
+
+{
+status: "success"
+totalResults: 635
+results: [
+0: {
+article_id: "65acabf8c123543bc7a99a1f1103cd57"
+link: "https://zeenews.india.com/india/gold-rises-dollar-falls-how-trump-is-accelerating-de-dollarisation-..."
+title: "Gold rises, Dollar falls: How Trump is accelerating de-Dollarisation? Explained"
+description: "India’s gold reserves have surged as the US dollar weakens, with central banks increasingly moving ..."
+content: "The world’s financial balance is shifting, and the tremors are being felt in both gold vaults and c..."
+keywords: [
+0: "us dollar fall"
+1: "gold price surge 2026"
+2: "brics digital currency"
+3: "de-dollarisation"
+4: "trump impact on dollar"
+5: "rbi gold holdings"
+]
+creator: [
+0: "zee news"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 05:38:01"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:38:01"
+image_url: "https://english.cdn.zeenews.com/sites/default/files/2026/01/27/1896838-whatsapp-image-2026-01-27-at..."
+video_url: null
+source_id: "zeenews"
+source_name: "Zee News"
+source_priority: 2369
+source_url: "http://zeenews.india.com"
+source_icon: "https://n.bytvi.com/zeenews.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 1.8
+neutral: 38.63
+positive: 59.57
+}
+ai_tag: [
+0: "economy"
+]
+ai_region: [
+0: "india,asia"
+1: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "India's gold reserves have increased significantly as the US dollar weakens, with the Reserve Bank ..."
+duplicate: false
+}
+1: {
+article_id: "bb1fa094d26a2788e72e3f552c3d2577"
+link: "https://timesofindia.indiatimes.com/videos/news/us-slams-india-eu-free-trade-agreement-says-europe-..."
+title: "US Slams India-EU Free Trade Agreement, Says Europe Funds Ukraine War While India Faces Tariff Heat"
+description: "The India-EU free trade agreement, dubbed the “mother of all deals,” has triggered rare public ange..."
+content: null
+keywords: [
+0: "news videos"
+]
+creator: [
+0: "timesofindia.com"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "multimedia"
+pubDate: "2026-01-27 05:37:03"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:37:03"
+image_url: "https://static.toiimg.com/thumb/msid-127598637,width-1280,height-720,imgsize-114640,resizemode-6,ov..."
+video_url: null
+source_id: "toi"
+source_name: "The Times Of India"
+source_priority: 2178
+source_url: "https://timesofindia.indiatimes.com"
+source_icon: "https://n.bytvi.com/toi.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 88.02
+neutral: 11.81
+positive: 0.17
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "us slams india"
+]
+ai_summary: "The US has criticized the India-EU free trade agreement, accusing Europe of indirectly funding the ..."
+duplicate: false
+}
+2: {
+article_id: "25fb6fb9dbdf4c7d7fc17cc51c2dd5af"
+link: "https://news.yahoo.co.jp/articles/c0c261fa6a37d4c1d30b09345cb864c58362babf"
+title: "トランプ氏、韓国への関税を25%に引き上げると発表 協定不履行と批判(BBC News)"
+description: "アメリカのドナルド・トランプ大統領は26日、韓国からの輸入品に対する関税を25%に引き上げると発表した。韓国が昨年の貿易協定を「履行していない」と非難している。トランプ氏はソーシャルメテ..."
+content: "現在JavaScriptが無効になっています Yahoo!ニュースのすべての機能を利用するためには、JavaScriptの設定を有効にしてください。 JavaScriptの設定を変更する方法は..."
+keywords: null
+creator: [
+0: "bbc news"
+]
+language: "japanese"
+country: [
+0: "japan"
+]
+category: [
+0: "world"
+]
+datatype: "news"
+pubDate: "2026-01-27 05:20:00"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:35:23"
+image_url: "https://newsatcl-pctr.c.yimg.jp/t/amd-img/20260127-15907563-bbc-000-1-view.jpg?exp=10800"
+video_url: null
+source_id: "yahoo_jp"
+source_name: "Yahoo Japan"
+source_priority: 449
+source_url: "https://news.yahoo.co.jp"
+source_icon: "https://n.bytvi.com/yahoo_jp.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 2.55
+neutral: 70.89
+positive: 26.56
+}
+ai_tag: null
+ai_region: null
+ai_org: null
+ai_summary: null
+duplicate: false
+}
+3: {
+article_id: "86195ce8edcb4a5310c5a820fd00ecf0"
+link: "https://www.thestar.com.my/news/world/2026/01/27/explainer-why-has-president-trump-threatened-to-ra..."
+title: "Explainer-Why has President Trump threatened to raise US tariffs on South Korea again?"
+description: "SEOUL, Jan 27 (Reuters) - U.S. President Donald ‌Trump said he was hiking tariffs on autos and othe..."
+content: "SEOUL, Jan 27 (Reuters) - U.S. President Donald ‌Trump said he was hiking tariffs on autos and othe..."
+keywords: [
+0: "world"
+]
+creator: [
+0: "cynthia kim"
+]
+language: "english"
+country: [
+0: "malaysia"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 05:04:00"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:07:51"
+image_url: "https://apicms.thestar.com.my/uploads/images/2026/01/27/3740410.jpg"
+video_url: null
+source_id: "thestar_my"
+source_name: "The Star"
+source_priority: 5603
+source_url: "https://www.thestar.com.my"
+source_icon: "https://n.bytvi.com/thestar_my.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 50.74
+neutral: 49.14
+positive: 0.12
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "seoul,south korea,asia"
+1: "south korea,asia"
+2: "seoul,seoul,south korea,asia"
+3: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "U.S. President Donald Trump has threatened to increase tariffs on South Korean goods to 25%, citing..."
+duplicate: true
+}
+4: {
+article_id: "afe15587ec185c511c8195cad1256751"
+link: "https://www.clickondetroit.com/news/world/2026/01/27/uks-starmer-heads-to-china-seeking-a-thaw-in-r..."
+title: "UK's Starmer heads to China seeking a thaw in relations but risking a rift with Trump"
+description: "U.K. Prime Minister Keir Starmer is heading to China, aiming to improve relations with Beijing amid..."
+content: "LONDON – U.K. Prime Minister Keir Starmer is heading to China, seeking a thaw in relations with Bei..."
+keywords: [
+0: "world news"
+1: "xi jinping"
+2: "david cameron"
+3: "donald trump"
+4: "peter kyle"
+5: "jimmy lai"
+6: "mark carney"
+7: "kerry brown"
+8: "chris patten"
+9: "andy burnham"
+10: "keir starmer"
+11: "friedrich merz"
+]
+creator: [
+0: "jill lawless, associated press"
+]
+language: "english"
+country: [
+0: "united states of america"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 05:00:43"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:38:11"
+image_url: "https://res.cloudinary.com/graham-media-group/image/upload/f_auto/q_auto/c_thumb,w_700/v1/media/gmg..."
+video_url: null
+source_id: "clickondetroit"
+source_name: "Clickondetroit"
+source_priority: 3621
+source_url: "https://www.clickondetroit.com"
+source_icon: "https://n.bytvi.com/clickondetroit.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.07
+neutral: 96
+positive: 3.93
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "china,asia"
+1: "u.k."
+2: "beijing,china,asia"
+3: "beijing,beijing,china,asia"
+]
+ai_org: [
+0: "uk starmer"
+]
+ai_summary: "U.K. Prime Minister Keir Starmer is visiting China to improve relations with Beijing, seeking econo..."
+duplicate: true
+}
+5: {
+article_id: "674a1453237073f8a20a5e1b27c8e2cc"
+link: "https://apnews.com/article/uk-keir-starmer-china-xi-jinping-ff7c71273f16a003cdf56ce8f6958308"
+title: "UK's Keir Starmer heads to China seeking a thaw in relations"
+description: "U.K. Prime Minister Keir Starmer is heading to China, aiming to improve relations with Beijing amid..."
+content: "LONDON (AP) — U.K. Prime Minister Keir Starmer is heading to China, seeking a thaw in relations wit..."
+keywords: [
+0: "kerry brown"
+1: "general news"
+2: "international news"
+3: "xi jinping"
+4: "david cameron"
+5: "beijing"
+6: "asia pacific"
+7: "donald trump"
+8: "world news"
+9: "send to apple news"
+10: "espionage"
+11: "united kingdom"
+12: "andy burnham"
+13: "politics"
+14: "international trade"
+15: "government policy"
+16: "china government"
+17: "peter kyle"
+18: "mark carney"
+19: "friedrich merz"
+20: "keir starmer"
+21: "jimmy lai"
+22: "china"
+23: "uk keir starmer china xi jinping"
+24: "united kingdom government"
+25: "chris patten"
+]
+creator: [
+0: "jill lawless"
+]
+language: "english"
+country: [
+0: "united states of america"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 05:00:43"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:35:23"
+image_url: "https://dims.apnews.com/dims4/default/66010cb/2147483647/strip/true/crop/2419x1612+0+0/resize/980x6..."
+video_url: null
+source_id: "apnews"
+source_name: "Apnews"
+source_priority: 110
+source_url: "https://apnews.com"
+source_icon: "https://n.bytvi.com/apnews.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.06
+neutral: 64.46
+positive: 35.48
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "china,asia"
+1: "beijing,china,asia"
+2: "united kingdom,europe"
+3: "u.k."
+4: "beijing,beijing,china,asia"
+]
+ai_org: [
+0: "starm"
+]
+ai_summary: "U.K. Prime Minister Keir Starmer is visiting China to improve relations with Beijing, seeking econo..."
+duplicate: false
+}
+6: {
+article_id: "638e7f8286012e4909a1eab395429a1f"
+link: "https://www.vogue.com/article/jonathan-cohen-and-larroudes-partnership-is-a-playbook-for-modern-fas..."
+title: "Jonathan Cohen and Larroudé’s Partnership Is a Playbook for Modern Fashion Production"
+description: "Jonathan Cohen is transitioning to a new operating model, making all of its pieces in Larroudé’s B..."
+content: "Designer Jonathan Cohen and CEO Sarah Leff decided last year — amid the turmoil of changing tariffs..."
+keywords: [
+0: "business / fashion"
+1: "business"
+2: "business / companies"
+]
+creator: [
+0: "hilary milnes"
+]
+language: "english"
+country: [
+0: "united states of america"
+]
+category: [
+0: "entertainment"
+]
+datatype: "news"
+pubDate: "2026-01-27 05:00:00"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:06:39"
+image_url: "https://assets.vogue.com/photos/6977b551c8a225b7637695b8/16:9/w_1280,c_limit/JonathanCohenWL_Look%2..."
+video_url: null
+source_id: "vogue"
+source_name: "Vogue"
+source_priority: 2581
+source_url: "https://www.vogue.com"
+source_icon: "https://n.bytvi.com/vogue.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.09
+neutral: 20.35
+positive: 79.56
+}
+ai_tag: [
+0: "fashion and lifestyle"
+]
+ai_region: [
+0: "larroude"
+]
+ai_org: null
+ai_summary: "Jonathan Cohen and CEO Sarah Leff have introduced a new operating model for the brand, dividing col..."
+duplicate: false
+}
+7: {
+article_id: "d083d880c359b00df098dd9d9f99593f"
+link: "https://ca.finance.yahoo.com/news/explainer-why-president-trump-threatened-045748554.html"
+title: "Explainer-Why has President Trump threatened to raise US tariffs on South Korea again?"
+description: "By Cynthia Kim and Jihoon Lee SEOUL, Jan 27 (Reuters) - U.S."
+content: "By Cynthia Kim and Jihoon Lee SEOUL, Jan 27 (Reuters) - U.S."
+keywords: [
+0: "news"
+]
+creator: [
+0: "reuters"
+]
+language: "english"
+country: [
+0: "canada"
+]
+category: [
+0: "sports"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:57:48"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:04:28"
+image_url: "https://s.yimg.com/uu/api/res/1.2/9pF0YegNO5huu4sigXg4pw--~B/aD01MzM7dz04MDA7YXBwaWQ9eXRhY2h5b24-/h..."
+video_url: null
+source_id: "yahoo"
+source_name: "Yahoo! News"
+source_priority: 17
+source_url: "https://news.yahoo.com"
+source_icon: "https://n.bytvi.com/yahoo.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 23.1
+neutral: 76.79
+positive: 0.11
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "south korea,asia"
+1: "united states of america,north america"
+]
+ai_org: [
+0: "reuters"
+]
+ai_summary: "President Trump has threatened to raise US tariffs on South Korea, citing unfair trade practices an..."
+duplicate: false
+}
+8: {
+article_id: "e855fede35e8a69f3c3e94cb4b1810cc"
+link: "https://economictimes.indiatimes.com/markets/us-stocks/news/us-dollar-under-pressure-in-early-2026-..."
+title: "US dollar under pressure in early 2026 amid policy and market uncertainty"
+description: "The US dollar is under fresh pressure in early 2026 as investors reassess its strength amid shiftin..."
+content: "The US dollar is facing renewed pressure in the opening weeks of 2026 as a mix of domestic policy s..."
+keywords: [
+0: "us dollar,us fed,federal reserve,geopolitical tensions,markets news,us dollar decline,federal reser..."
+]
+creator: [
+0: "anupam nagar"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:49:33"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:06:54"
+image_url: "https://img.etimg.com/photo/118783427.cms"
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 76.71
+neutral: 23.25
+positive: 0.04
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: [
+0: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "The US dollar faces pressure in early 2026 due to policy shifts, geopolitical risks, and central ba..."
+duplicate: false
+}
+9: {
+article_id: "a899f337fa543e82256c2dcbbaa8b255"
+link: "https://www.ndtv.com/world-news/eu-and-india-conclude-trade-talks-seeking-trump-alternatives-108906..."
+title: "EU And India Conclude Trade Talks, Seeking Trump Alternatives"
+description: "The European Union and India are set to announce an agreement on a long-awaited trade deal on Tuesd..."
+content: "The European Union and India are set to announce an agreement on a long-awaited trade deal on Tuesd..."
+keywords: null
+creator: null
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:47:35"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:05:11"
+image_url: "https://c.ndtvimg.com/2026-01/lnkdrd6c_antonio-costa-pm-modi-and-ursula-von-der-leyen_625x300_27_Ja..."
+video_url: null
+source_id: "ndtv"
+source_name: "Ndtv"
+source_priority: 1204
+source_url: "http://www.ndtv.com"
+source_icon: "https://n.bytvi.com/ndtv.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.07
+neutral: 6.31
+positive: 93.62
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "eu and india"
+1: "european union"
+]
+ai_summary: "The European Union and India will announce a trade deal on Tuesday, aiming to strengthen economic t..."
+duplicate: true
+}
+10: {
+article_id: "90a15c74631c9f508476f48a182ebc1f"
+link: "https://www.hindustantimes.com/business/vw-to-bmw-brace-for-tough-india-market-even-after-india-eu-..."
+title: "VW to BMW brace for tough India market even after India-EU trade deal"
+description: "Cracking India's car market dominated by Maruti Suzuki, and Tata Motors and Mahindra, is easier sai..."
+content: "Cracking India's car market dominated by Maruti Suzuki, and Tata Motors and Mahindra, is easier sai..."
+keywords: [
+0: "business"
+]
+creator: [
+0: "hindustan times"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:46:44"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:06:37"
+image_url: "https://www.hindustantimes.com/ht-img/img/2026/01/27/1600x900/logo/Volkswagen_Golf_GTI_174110484622..."
+video_url: null
+source_id: "hindustantimes"
+source_name: "Hindustan Times"
+source_priority: 2173
+source_url: "http://www.hindustantimes.com"
+source_icon: "https://n.bytvi.com/hindustantimes.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 83.34
+neutral: 16.54
+positive: 0.12
+}
+ai_tag: [
+0: "automotive"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "maruti suzuki"
+1: "bmw"
+2: "mahindra"
+3: "tata motors"
+4: "vw"
+]
+ai_summary: "European carmakers, including Volkswagen, Renault, and BMW, are preparing for a challenging market ..."
+duplicate: false
+}
+11: {
+article_id: "6ba311fc3c5b5e463bfdd47a7c04307e"
+link: "https://news.abplive.com/news/world/europe-financing-war-against-themselves-us-as-india-uk-ink-moth..."
+title: "'Europe Financing War Against Themselves': US Reacts As India-EU Set To Ink 'Mother Of All Trade De..."
+description: "US Treasury Secretary Scott Bessent slammed the India-EU free trade agreement, which is likely to b..."
+content: "US Treasury Secretary Scott Bessent slammed the India-EU free trade agreement, which is likely to b..."
+keywords: [
+0: "world"
+]
+creator: [
+0: "apoorva gupta"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "world"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:45:55"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:09:53"
+image_url: "https://feeds.abplive.com/onecms/images/uploaded-images/2026/01/27/01908efc2f40cecd485bc7394b10421b..."
+video_url: null
+source_id: "abplive"
+source_name: "Abp News"
+source_priority: 7754
+source_url: "http://abplive.com"
+source_icon: "https://n.bytvi.com/abplive.jpg"
+sentiment: "negative"
+sentiment_stats: {
+negative: 97.73
+neutral: 2.2
+positive: 0.07
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "us treasury"
+]
+ai_summary: "US Treasury Secretary Scott Bessent criticized the upcoming India-EU free trade agreement, claiming..."
+duplicate: false
+}
+12: {
+article_id: "b37a58c4b4dab729185738797303a13a"
+link: "https://www.deccanherald.com/business/markets/rupee-recovers-10-paise-from-all-time-low-to-9180-aga..."
+title: "Rupee recovers 10 paise from all-time low to 91.80 against US dollar in early trade"
+description: "Dollar to Rupee Rate: The rupee rebounds 10 paise from an all-time low to 91.80 against the US doll..."
+content: "Mumbai: The rupee rebounded from its all-time low levels and gained 10 paise to trade at 91.80 agai..."
+keywords: [
+0: "dollar to inr conversion"
+1: "1 usd to inr"
+2: "1 us dollar in rupees"
+3: "dollar inr rate forecast"
+4: "inr to us dollar"
+5: "dollar inr forex rates"
+6: "usd to inr"
+7: "crude oil prices impact"
+8: "fpi outflows"
+9: "us tariffs on india"
+10: "convert us dollar to inr"
+11: "dollar to rupee"
+12: "rupee outlook"
+13: "us dollar convert to indian rupees"
+14: "convert us dollars to rupees"
+15: "1 us dollar in india"
+16: "technical charts"
+17: "indian rupee to us dollar"
+18: "us dollar to indian rupee"
+19: "dollar vs rupee"
+20: "rupee hits record low"
+21: "dollar to inr currency converter"
+22: "dollar to inr rate forecast"
+23: "india us trade deal"
+24: "1 us dollar to inr"
+25: "rupee recovery today"
+26: "dollar to inr"
+27: "us dollar to rupee"
+28: "rbi forex reserves"
+29: "usdinr"
+30: "1 us dollar in indian rupees"
+31: "1 dollar to rupee convertor"
+32: "dollar index impact on rupee"
+]
+creator: [
+0: "pti"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:37:14"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:37:22"
+image_url: "https://media.assettype.com/deccanherald%2F2026-01-27%2Fdh4gy929%2FRupee_1581684560.jpg?ar=40%3A21&..."
+video_url: null
+source_id: "deccanherald"
+source_name: "Deccan Herald"
+source_priority: 4575
+source_url: "https://www.deccanherald.com"
+source_icon: "https://n.bytvi.com/deccanherald.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.13
+neutral: 48.06
+positive: 51.81
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: [
+0: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "The Indian rupee recovered 10 paise to 91.80 against the US dollar in early trade, following a hist..."
+duplicate: true
+}
+13: {
+article_id: "33ab1926622aa05eae19b2d682a1674f"
+link: "https://zeenews.india.com/india/pakistan-pleaded-for-cessation-of-fighting-during-operation-sindoor..."
+title: "`Pakistan pleaded for cessation of fighting during Operation Sindoor`: India at UNSC"
+description: "India told the UN Security Council that the Pakistani military directly pleaded for a halt to Opera..."
+content: "India has informed the UN Security Council that the Pakistani military directly “pleaded” for an en..."
+keywords: [
+0: "pakistani military plea"
+1: "pahalgam terrorist attack"
+2: "un security council statement"
+3: "cross-border terrorism"
+4: "p harish un"
+5: "operation sindoor"
+6: "lashkar-e-taiba attack"
+7: "india pakistan conflict"
+8: "operation sindoor"
+9: "kashmir dispute"
+10: "indus waters treaty suspension"
+]
+creator: [
+0: "zee news"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:36:35"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:35"
+image_url: "https://english.cdn.zeenews.com/sites/default/files/2026/01/27/1896818-mixcollage-27-jan-2026-09-54..."
+video_url: null
+source_id: "zeenews"
+source_name: "Zee News"
+source_priority: 2369
+source_url: "http://zeenews.india.com"
+source_icon: "https://n.bytvi.com/zeenews.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 83.17
+neutral: 16.22
+positive: 0.61
+}
+ai_tag: [
+0: "conflicts & war"
+1: "national security"
+]
+ai_region: [
+0: "india,asia"
+1: "pakistan,asia"
+]
+ai_org: [
+0: "unsc"
+1: "un security council"
+]
+ai_summary: "India informed the UN Security Council that the Pakistani military directly pleaded for a halt to O..."
+duplicate: false
+}
+14: {
+article_id: "812e9395de7236f66182fdccccb09d91"
+link: "https://economictimes.indiatimes.com/markets/forex/rupee-recovers-10-paise-from-all-time-low-to-91-..."
+title: "Rupee recovers 10 paise from all-time low to 91.80 against US dollar in early trade"
+description: "The Indian Rupee has recovered from its historic low against the US Dollar. This rebound comes as t..."
+content: "The rupee rebounded from its all-time low levels and gained 10 paise to trade at 91.80 against the ..."
+keywords: [
+0: "us dollar exchange rate,forex market news,geopolitical impact on rupee,rupee recovery,india us trad..."
+]
+creator: [
+0: "pti"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:34:23"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:06:19"
+image_url: "https://img.etimg.com/photo/118783427.cms"
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.02
+neutral: 2.71
+positive: 97.27
+}
+ai_tag: [
+0: "economy"
+]
+ai_region: [
+0: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "The Indian Rupee recovered 10 paise to 91.80 against the US dollar, following a historic low of 92...."
+duplicate: true
+}
+15: {
+article_id: "2f79e985465d506d02e52303be9e9b92"
+link: "https://newsable.asianetnews.com/business/indian-markets-open-flat-investors-eye-indiaeu-fta-signin..."
+title: "Indian markets open flat; investors eye India-EU FTA signing today"
+description: "Indian markets opened marginally higher as investors await the signing of the India-EU FTA. Experts..."
+content: "Indian markets opened marginally higher as investors await the signing of the India-EU FTA. Experts..."
+keywords: [
+0: "business"
+]
+creator: [
+0: "asianet news central"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:30:26"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:38:21"
+image_url: "https://static.asianetnews.com/images/w-1280,h-720,format-jpg,imgid-external,imgname-image-b4fb3a73..."
+video_url: null
+source_id: "newsable_asianetnews"
+source_name: "Asianet Newsable"
+source_priority: 7749
+source_url: "https://newsable.asianetnews.com"
+source_icon: "https://n.bytvi.com/newsable_asianetnews.jpg"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.04
+neutral: 61.55
+positive: 38.41
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "fta"
+]
+ai_summary: "Indian markets opened marginally higher, with investors awaiting the India-EU FTA signing. The Nift..."
+duplicate: false
+}
+16: {
+article_id: "092a67f568b0a5511d622c6cf5c83a8f"
+link: "https://www.smh.com.au/world/north-america/why-trump-just-proved-mark-carney-s-point-20260127-p5nxb..."
+title: "Why Trump just proved Mark Carney’s point"
+description: "Canada’s prime minister stood up to the US president. Trump’s response tells us that Carney’s remar..."
+content: "January 27, 2026 — 3:30pm You have reached your maximum number of saved items. Remove items from yo..."
+keywords: [
+0: "world / north america"
+]
+creator: [
+0: "ezra klein"
+]
+language: "english"
+country: [
+0: "australia"
+]
+category: [
+0: "world"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:30:00"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:08"
+image_url: "https://static.ffx.io/images/$zoom_0.1226,$multiply_0.7554,$ratio_1.777778,$width_1059,$x_0,$y_110/..."
+video_url: null
+source_id: "smh"
+source_name: "The Sydney Morning Herald"
+source_priority: 2251
+source_url: "https://www.smh.com.au"
+source_icon: "https://n.bytvi.com/smh.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.72
+neutral: 1.53
+positive: 97.75
+}
+ai_tag: [
+0: "politics"
+]
+ai_region: [
+0: "canada,kentucky,united states of america,north america"
+1: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "Canadian Prime Minister Justin Trudeau responded to US President Donald Trump's disinvitation from ..."
+duplicate: false
+}
+17: {
+article_id: "7715f9eea1b4026fd1981d363d85cb9f"
+link: "https://www.moneycontrol.com/news/business/markets/hindustan-zinc-shares-jump-5-as-silver-s-march-f..."
+title: "Hindustan Zinc shares jump 5% as silver's March futures cross Rs 3.5 lakh/kg on MCX, silver ETFs su..."
+description: "Silver futures on MCX with March expiry jumped more than 7% to hit a fresh lifetime high of Rs 3,59..."
+content: "Hindustan Zinc shares hit 52-week high as silver prices surge to record levels Silver ETFs jump up ..."
+keywords: [
+0: "hindustan zinc share price, hindustan zinc nse, hindustan zinc bse, hindustan zinc silver, silver e..."
+]
+creator: [
+0: "debaroti adhikary"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:27:25"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:35:51"
+image_url: "https://images.moneycontrol.com/static-mcnews/2025/12/20251209171925_spotsilverrtr.png"
+video_url: null
+source_id: "moneycontrol"
+source_name: "Moneycontrol"
+source_priority: 2087
+source_url: "https://www.moneycontrol.com"
+source_icon: "https://n.bytvi.com/moneycontrol.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.02
+neutral: 0.06
+positive: 99.92
+}
+ai_tag: [
+0: "financial markets"
+1: "metal & mining"
+]
+ai_region: null
+ai_org: [
+0: "mcx"
+1: "hindustan zinc"
+]
+ai_summary: "Hindustan Zinc shares surged 5% as silver prices hit a new lifetime high of Rs 3.59,800/kg on MCX, ..."
+duplicate: false
+}
+18: {
+article_id: "30c108b31af87b183535424d1b49764e"
+link: "https://www.timesnownews.com/business-economy/personal-finance/gold-rate-today-january-26-2025-yell..."
+title: "Gold Rate Today (January 26, 2025): Yellow Metal Touches New Record High; Check Prices In Delhi, Mu..."
+description: "​Gold Rate Today: Several interconnected elements shape gold pricing in the country. International ..."
+content: "Gold prices surged to fresh record highs in the domestic futures market on Tuesday morning, January..."
+keywords: [
+0: "safe haven assets"
+1: "mcx gold futures"
+2: "gold prices"
+3: "domestic futures market"
+4: "mcx silver futures"
+5: "record high gold prices"
+6: "weak us dollar"
+7: "geopolitical tensions"
+]
+creator: [
+0: "priya raghuvanshi"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:24:36"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:38"
+image_url: "https://images.timesnownews.com/thumb/msid-153511577,imgsize-104194,width-1280,height-720/153511577..."
+video_url: null
+source_id: "timesnownews"
+source_name: "Times Now News"
+source_priority: 2243
+source_url: "https://www.timesnownews.com"
+source_icon: "https://n.bytvi.com/timesnownews.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.85
+neutral: 24.78
+positive: 74.37
+}
+ai_tag: [
+0: "metal & mining"
+]
+ai_region: [
+0: "chennai,tamil nadu,india,asia"
+1: "mumbai,maharashtra,india,asia"
+2: "delhi,delhi,india,asia"
+3: "delhi,india,asia"
+4: "bangalore"
+]
+ai_org: null
+ai_summary: "Gold prices hit a new record high in India, driven by geopolitical tensions, a weaker dollar, and e..."
+duplicate: false
+}
+19: {
+article_id: "2f21e393404696bd369241ebd2c07535"
+link: "https://english.mathrubhumi.com/news/world/carney-trump-tariff-threats-us-canada-trade-talks-jfkgri..."
+title: "Carney plays down Trump’s tariff threat ahead of US-Canada trade review"
+description: "Mark Carney says Donald Trump’s tariff threats reflect negotiation tactics ahead of a scheduled rev..."
+content: "Toronto: Canadian Prime Minister Mark Carney said Monday some of US President Donald Trump’s threat..."
+keywords: [
+0: "world"
+]
+creator: [
+0: "news desk"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:22:55"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:38:44"
+image_url: "https://img.mathrubhumi.com/view/acePublic/alias/contentid/1os4v5xsbfxnfn1i54m/0/trump-carney-jpg.j..."
+video_url: null
+source_id: "mathrubhumi"
+source_name: "Mathrubhumi English"
+source_priority: 7490
+source_url: "https://english.mathrubhumi.com"
+source_icon: "https://n.bytvi.com/mathrubhumi.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.28
+neutral: 77.23
+positive: 22.49
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "us-canada"
+]
+ai_org: null
+ai_summary: "Canadian Prime Minister Mark Carney downplayed US President Donald Trump's tariff threats ahead of ..."
+duplicate: false
+}
+20: {
+article_id: "42a4e5b2b0f009471f3b2737e95cd574"
+link: "http://economictimes.indiatimes.com/markets/stocks/news/textile-shrimp-stocks-rally-up-to-12-as-ind..."
+title: "Apex Frozen Foods, Gokaldas Exports and other textile, shrimp stocks zoom up to 12% as India-EU gea..."
+description: "Shares of Indian textile and shrimp companies surged following the conclusion of a free trade agree..."
+content: "Shares of export-oriented textile and shrimp companies saw renewed buying interest, rising as much ..."
+keywords: [
+0: "kpr mill"
+1: "vardhman textiles"
+2: "apex frozen foods"
+3: "shrimp stocks"
+4: "welspun living"
+5: "trident"
+6: "avanti feeds"
+7: "india-eu trade deal"
+8: "textile stocks news"
+9: "shrimp stocks news"
+10: "textile stocks"
+11: "india eu free trade agreement"
+12: "gokaldas exports"
+]
+creator: [
+0: "veer sharma"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:22:49"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 05:07:00"
+image_url: "https://img.etimg.com/thumb/width-1200,height-900,imgsize-76526,resizemode-75,msid-127595027/market..."
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.01
+neutral: 0.12
+positive: 99.87
+}
+ai_tag: [
+0: "textile"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "apex frozen foods"
+1: "gokaldas exports"
+]
+ai_summary: "India's textile and shrimp stocks surged by up to 12% following the conclusion of a free trade agre..."
+duplicate: false
+}
+21: {
+article_id: "1af73d917e31a872c6d4e59926389391"
+link: "https://economictimes.indiatimes.com/markets/stocks/news/textile-shrimp-stocks-rally-up-to-12-as-in..."
+title: "Apex Frozen Foods, Gokaldas Exports and other textile, shrimp stocks rally up to 12% as India wraps..."
+description: "Shares of Indian textile and shrimp companies surged following the conclusion of a free trade agree..."
+content: "Shares of export-oriented textile and shrimp companies saw renewed buying interest, rising as much ..."
+keywords: [
+0: "india eu free trade agreement,textile stocks,shrimp stocks,welspun living,kpr mill,vardhman textile..."
+]
+creator: [
+0: "veer sharma"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:22:49"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:43"
+image_url: "https://img.etimg.com/photo/118783427.cms"
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.02
+neutral: 0.05
+positive: 99.93
+}
+ai_tag: [
+0: "textile"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "apex frozen foods"
+1: "gokaldas exports"
+]
+ai_summary: "India's textile and shrimp stocks surged by up to 12% following the conclusion of a free trade agre..."
+duplicate: false
+}
+22: {
+article_id: "58dfe2bff33e348ac3030ef91479549d"
+link: "https://www.hindustantimes.com/business/mm-leads-decline-in-auto-stocks-as-india-eu-fta-said-to-cut..."
+title: "M&M leads decline in auto stocks as India-EU FTA said to cut import duty on cars"
+description: "The India-EU FTA is said to include a clause reduce import duty on European cars to 40% from 110%, ..."
+content: "The India-EU FTA is said to include a clause reduce import duty on European cars to 40% from 110%, ..."
+keywords: [
+0: "latest"
+]
+creator: [
+0: "hindustan times"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "technology"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:16:42"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:57"
+image_url: "https://www.hindustantimes.com/ht-img/img/2026/01/27/1600x900/logo/Mahindra_Thar_Roxx_1769004084429..."
+video_url: null
+source_id: "hindustantimes"
+source_name: "Hindustan Times"
+source_priority: 2173
+source_url: "http://www.hindustantimes.com"
+source_icon: "https://n.bytvi.com/hindustantimes.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 36.99
+neutral: 58.26
+positive: 4.75
+}
+ai_tag: [
+0: "automotive"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "fta"
+1: "m&m"
+]
+ai_summary: "India-EU FTA to reduce import duty on European cars to 40% from 110%, impacting Indian automakers l..."
+duplicate: false
+}
+23: {
+article_id: "55c0d3f86208f559f968d7495ececebe"
+link: "https://www.moneycontrol.com/news/business/higher-us-tariffs-global-risks-may-keep-budget-fiscally-..."
+title: "Higher US tariffs, global risks may keep Budget fiscally accommodative"
+description: "Looking ahead, rating executives expect India to remain the world's fastest-growing major economy o..."
+content: "Government likely to avoid aggressive fiscal tightening in upcoming Budget Fiscal deficit target ex..."
+keywords: [
+0: "union budget, budget news, union budget news, budget today, india budget, nirmala sitharaman"
+]
+creator: [
+0: "moneycontrol news"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:15:04"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:04"
+image_url: "https://images.moneycontrol.com/static-mcnews/2026/01/20260123090614_Indian-Rupee-shutterstock.jpg"
+video_url: null
+source_id: "moneycontrol"
+source_name: "Moneycontrol"
+source_priority: 2087
+source_url: "https://www.moneycontrol.com"
+source_icon: "https://n.bytvi.com/moneycontrol.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.02
+neutral: 3.78
+positive: 96.2
+}
+ai_tag: [
+0: "economy"
+]
+ai_region: [
+0: "india,asia"
+1: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "US tariffs and global risks may influence the US Budget, with a fiscal deficit target of 4.2% of GD..."
+duplicate: false
+}
+24: {
+article_id: "b7231894b3a0b788103547d0b42b455d"
+link: "https://www.rt.com/india/631532-india-eu-trade-deal/"
+title: "India-EU trade deal: Why Brussels is rushing to make new friends in the East"
+description: "The EU’s labelling of an economic pact with India as the “mother of all deals” seems to suggest cam..."
+content: "The bloc is calling an economic pact with New Delhi the “mother of all deals,” suggesting camouflag..."
+keywords: null
+creator: [
+0: "rt"
+]
+language: "english"
+country: [
+0: "united kingdom"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:11:46"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:36:43"
+image_url: "https://mf.b37mrtl.ru/files/2026.01/thumbnail/6977942e85f5403add4e5c05.jpg"
+video_url: null
+source_id: "rt"
+source_name: "Rt"
+source_priority: 2327
+source_url: "https://www.rt.com"
+source_icon: "https://n.bytvi.com/rt.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 3.1
+neutral: 94.07
+positive: 2.83
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "india,asia"
+1: "brussels,ontario,canada,north america"
+2: "brussels,wisconsin,united states of america,north america"
+3: "brussels,brussels-capital region,belgium,europe"
+]
+ai_org: null
+ai_summary: "The EU is eager to finalize a trade deal with India, calling it the 'mother of all deals' and highl..."
+duplicate: false
+}
+25: {
+article_id: "fd9261b92db1ccb2063b2a5317e20ceb"
+link: "https://zeenews.india.com/world/trump-raises-tariffs-on-south-korea-to-25-amid-investment-bill-dela..."
+title: "Trump raises tariffs on South Korea to 25% amid investment bill delay"
+description: "Trump said in a social media post that he is raising "reciprocal" tariffs and auto duties on South ..."
+content: "US President Donald Trump's surprise announcement to raise tariffs on South Korea appears to be aim..."
+keywords: [
+0: "trump reciprocal tariffs"
+1: "korea national assembly trade bill"
+2: "us korea investment pledge"
+3: "us supreme court tariffs ruling"
+4: "trump trade policies"
+5: "south korea tariffs hike"
+6: "trump trade policy"
+7: "us korea trade tensions"
+8: "donald trump tariffs"
+9: "us south korea trade"
+]
+creator: [
+0: "zee news"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "world"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:05:00"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:06:13"
+image_url: "https://english.cdn.zeenews.com/sites/default/files/2026/01/27/1896803-untitled-design-25.jpg"
+video_url: null
+source_id: "zeenews"
+source_name: "Zee News"
+source_priority: 2369
+source_url: "http://zeenews.india.com"
+source_icon: "https://n.bytvi.com/zeenews.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 80.77
+neutral: 19.16
+positive: 0.07
+}
+ai_tag: [
+0: "economy"
+]
+ai_region: [
+0: "south korea,asia"
+]
+ai_org: null
+ai_summary: "US President Donald Trump announced a 25% increase in tariffs on South Korea, targeting 'reciprocal..."
+duplicate: false
+}
+26: {
+article_id: "523b30a4b6c1b771cc624659d9328619"
+link: "https://economictimes.indiatimes.com/markets/stocks/news/hyundai-motor-india-shares-in-focus-as-tru..."
+title: "Hyundai Motor India shares in focus as Trump threatens tariff hike on South Korea auto industry"
+description: "Hyundai Motor India shares are under scrutiny following US President Trump's threat to hike tariffs..."
+content: "Shares of Hyundai Motor India are set to be in focus in Tuesday’s trade, January 27, after US Presi..."
+keywords: [
+0: "hyundai motor india,hyundai motor india,hyundai motor shares,hyundai motor india share price,trump ..."
+]
+creator: [
+0: "etmarkets.com"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "technology"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:03:14"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:05:56"
+image_url: "https://img.etimg.com/photo/118783427.cms"
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 88.12
+neutral: 11.83
+positive: 0.05
+}
+ai_tag: [
+0: "automotive"
+]
+ai_region: [
+0: "south korea,asia"
+1: "united states of america,north america"
+]
+ai_org: [
+0: "hyundai motor india"
+]
+ai_summary: "Hyundai Motor India shares are under scrutiny as US President Trump threatens to increase tariffs o..."
+duplicate: false
+}
+27: {
+article_id: "072e3337e93c49dda775050495e6fefb"
+link: "https://economictimes.indiatimes.com/markets/stocks/news/sensex-falls-over-400-pts-nifty-below-2500..."
+title: "Sensex falls over 400 pts, Nifty below 25,000 as trade tariff worries linger; all eyes on US Fed me..."
+description: "Indian stock markets opened lower on Tuesday. Global cues, including US tariffs and upcoming Federa..."
+content: "Benchmark indices Nifty and Sensex opened Tuesday’s trading session on a weak note after US Preside..."
+keywords: [
+0: "axis bank,bel,kotak mahindra bank,sensex falls,sensex news,nifty,stock market news,markets news,bse..."
+]
+creator: [
+0: "etmarkets.com"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 04:00:41"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:06:11"
+image_url: "https://img.etimg.com/photo/118783427.cms"
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 92.71
+neutral: 7.27
+positive: 0.02
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: [
+0: "united states of america,north america"
+]
+ai_org: [
+0: "fed"
+]
+ai_summary: "Indian stock markets opened lower amid US trade tariff concerns and anticipation of the Federal Res..."
+duplicate: false
+}
+28: {
+article_id: "a98f08815826e6cbed8978c996a25819"
+link: "https://www.khaleejtimes.com/business/markets/indian-rupee-crosses-rs25-threshold-against-uae-dirha..."
+title: "Indian rupee crosses Rs25 threshold against UAE dirham in early trade"
+description: "Traders pointed out that the pace of the decline suggests pressures are not limited to portfolio fl..."
+content: "The Indian rupee on Tuesday opened at 91.82 against the US dollar (25.01907 against the UAE dirham)..."
+keywords: [
+0: "markets"
+]
+creator: [
+0: "meher dhanjal"
+]
+language: "english"
+country: [
+0: "united arab emirates"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:56:15"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:07:57"
+image_url: "https://imgengine.khaleejtimes.com/khaleejtimes-english/2026-01-19/culnwvj3/2025newsmlRC26UDAF88EE1..."
+video_url: null
+source_id: "khaleejtimes"
+source_name: "Khaleej Times"
+source_priority: 7688
+source_url: "https://www.khaleejtimes.com"
+source_icon: "https://n.bytvi.com/khaleejtimes.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 4.37
+neutral: 89.27
+positive: 6.36
+}
+ai_tag: [
+0: "financial markets"
+1: "economy"
+]
+ai_region: null
+ai_org: null
+ai_summary: "The Indian rupee fell to a new all-time low against the UAE dirham, crossing the Rs25 threshold in ..."
+duplicate: false
+}
+29: {
+article_id: "bc82fc76238770dad0da0c4939e5aad7"
+link: "https://www.ndtv.com/world-news/russia-oils-unexpected-staying-power-in-india-extends-into-2026-108..."
+title: "Russia Oil's Unexpected Staying Power In India Extends Into 2026"
+description: "For much of last year, discounted Russian oil made up the lion's share of Indian purchases, a finan..."
+content: "For much of last year, discounted Russian oil made up the lion's share of Indian purchases, a finan..."
+keywords: null
+creator: null
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:54:44"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:35:06"
+image_url: "https://c.ndtvimg.com/2026-01/mcalm854_russia-oil_625x300_27_January_26.jpeg"
+video_url: null
+source_id: "ndtv"
+source_name: "Ndtv"
+source_priority: 1204
+source_url: "http://www.ndtv.com"
+source_icon: "https://n.bytvi.com/ndtv.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.19
+neutral: 5.11
+positive: 94.7
+}
+ai_tag: [
+0: "financial markets"
+1: "economy"
+]
+ai_region: [
+0: "moscow,russia,europe/asia"
+1: "moscow,moscow,russia,europe/asia"
+]
+ai_org: null
+ai_summary: "Despite US threats, tariffs, and sanctions, Russia's discounted oil remains a significant part of I..."
+duplicate: true
+}
+30: {
+article_id: "137c8d6c67081a7ff1ce6e66dfa55ffa"
+link: "https://timesofindia.indiatimes.com/business/india-business/stock-market-today-nifty50-bse-sensex-j..."
+title: "Stock market today: Nifty50 near 25,000; BSE Sensex drops over 170 points in opening trade"
+description: "Stock market today: Nifty50 and BSE Sensex, the Indian equity benchmarks, dropped in opening trade ..."
+content: "Stock market today (AI image) Stock market today: Nifty50 and BSE Sensex , the Indian equity benchm..."
+keywords: [
+0: "business news today"
+1: "business news"
+2: "nifty50"
+3: "india eu free trade agreement"
+4: "stock market today"
+5: "indian equities"
+6: "financial news"
+7: "stock market"
+8: "india business news"
+9: "global markets"
+10: "donald trump tariffs"
+11: "dalal street"
+12: "bse sensex"
+]
+creator: [
+0: "toi business desk"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:49:39"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:06:29"
+image_url: "https://static.toiimg.com/thumb/msid-127592759,imgsize-106692,width-400,resizemode-4/stock-market-t..."
+video_url: null
+source_id: "toi"
+source_name: "The Times Of India"
+source_priority: 2178
+source_url: "https://timesofindia.indiatimes.com"
+source_icon: "https://n.bytvi.com/toi.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 40.34
+neutral: 59.47
+positive: 0.19
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: null
+ai_org: [
+0: "bse sensex"
+1: "nifty50"
+2: "tuesda"
+]
+ai_summary: "The Indian stock market opened with a downturn, with Nifty50 near 25,000 and BSE Sensex dropping ov..."
+duplicate: false
+}
+31: {
+article_id: "2a8f00b0d161c0ed27c9bc9b98558908"
+link: "https://www.firstpost.com/explainers/free-trade-agreement-defence-deal-and-mobility-pact-india-eu-s..."
+title: "FTA, defence deal and mobility pact... What to expect from India-EU summit"
+description: "When Prime Minister Narendra Modi sits down for talks with European Council President Antonio Costa..."
+content: "After being wowed at the 77th Republic Day parade, European Commission President Ursula von der Ley..."
+keywords: [
+0: "explainers"
+]
+creator: [
+0: "fp explainers"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:47:03"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:08:24"
+image_url: "https://images.firstpost.com/uploads/2026/01/eu1-2026-01-868f93177b65ec62044d687f6074fd67.jpg"
+video_url: null
+source_id: "firstpost"
+source_name: "Firstpost"
+source_priority: 5906
+source_url: "https://www.firstpost.com"
+source_icon: "https://n.bytvi.com/firstpost.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.07
+neutral: 97.69
+positive: 2.24
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "india,asia"
+]
+ai_org: [
+0: "fta"
+1: "european commission"
+2: "european council"
+]
+ai_summary: "Prime Minister Narendra Modi and European leaders are set to conclude negotiations on a historic fr..."
+duplicate: false
+}
+32: {
+article_id: "4e40f66bba1757a0e30088ccb17d328f"
+link: "https://investinglive.com/news/investinglive-asia-pacific-fx-news-wrap-wild-gold-and-silver-price-s..."
+title: "investingLive Asia-Pacific FX news wrap: Wild gold and silver price swings continue"
+description: "January FOMC preview: Fed seen on hold with little new guidanceMorgan Stanley sees gold at $5,700 a..."
+content: "Summary: US President Donald Trump said he will raise tariffs on South Korean goods to 25% from 15%..."
+keywords: [
+0: "news"
+]
+creator: [
+0: "investinglive.com"
+1: "eamonn sheridan"
+]
+language: "english"
+country: [
+0: "united states of america"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:38:51"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:08:23"
+image_url: "https://images.investinglive.com/images/silver%20wrap%2027%20January%202026_id_6dd19354-3851-494f-a..."
+video_url: null
+source_id: "forexlive"
+source_name: "Forexlive"
+source_priority: 9087
+source_url: "https://www.forexlive.com"
+source_icon: "https://n.bytvi.com/forexlive.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.85
+neutral: 97.52
+positive: 1.63
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: [
+0: "asia pacific"
+]
+ai_org: [
+0: "fomc"
+1: "fed"
+]
+ai_summary: "Investing Live Asia-Pacific FX news highlights continued wild price swings in gold and silver, with..."
+duplicate: false
+}
+33: {
+article_id: "4e0643c258c574db5c518cd1240e1726"
+link: "https://newsable.asianetnews.com/world/financing-war-against-itself-us-slams-europe-over-india-eu-t..."
+title: "‘Financing War Against Itself’: US Slams Europe Over India-EU Trade Deal"
+description: "The US has criticised Europe’s energy policy, saying its purchase of India-refined Russian oil indi..."
+content: "The United States has sharply criticised Europe’s approach to energy and trade as India and the Eur..."
+keywords: [
+0: "world"
+]
+creator: [
+0: "deevika nm"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:36:52"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:39:13"
+image_url: "https://static.asianetnews.com/images/w-1280,h-720,format-jpg,imgid-01kfyn29kwbxk1wxdb1rw8v9g2,imgn..."
+video_url: null
+source_id: "newsable_asianetnews"
+source_name: "Asianet Newsable"
+source_priority: 7749
+source_url: "https://newsable.asianetnews.com"
+source_icon: "https://n.bytvi.com/newsable_asianetnews.jpg"
+sentiment: "negative"
+sentiment_stats: {
+negative: 93.73
+neutral: 6.18
+positive: 0.09
+}
+ai_tag: [
+0: "national security"
+]
+ai_region: [
+0: "europe"
+1: "united states of america,north america"
+2: "moscow,moscow,russia,europe/asia"
+3: "moscow,russia,europe/asia"
+]
+ai_org: null
+ai_summary: "US Treasury Secretary Scott Bessent criticized Europe's energy policy, stating that its purchase of..."
+duplicate: false
+}
+34: {
+article_id: "17cbbb381bf20a2719690427ad06667d"
+link: "https://www.india.com/business/the-golden-ticket-why-the-india-eu-trade-deal-matters-more-than-you-..."
+title: "The Golden Ticket: Why the India-EU Trade Deal Matters More Than You Think"
+description: "The EU is a customs union of twenty-seven rich nations acting as one giant market. So with just one..."
+content: "The EU is a customs union of twenty-seven rich nations acting as one giant market. So with just one..."
+keywords: [
+0: "india-eu trade deal"
+1: "business"
+]
+creator: [
+0: "girish linganna"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "lifestyle"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:30:02"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:35:43"
+image_url: "https://static.india.com/wp-content/uploads/2026/01/india-eu-fta-2.png"
+video_url: null
+source_id: "india"
+source_name: "India"
+source_priority: 1128
+source_url: "https://www.india.com"
+source_icon: "https://n.bytvi.com/india.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.03
+neutral: 2.29
+positive: 97.68
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: null
+ai_org: null
+ai_summary: "India is set to sign a landmark trade deal with the European Union, granting Indian businesses acce..."
+duplicate: false
+}
+35: {
+article_id: "d5523ab93ded282c0f2aab145af87293"
+link: "https://www.hindustantimes.com/india-news/us-made-bigger-sacrifices-than-trump-aide-slams-eu-over-i..."
+title: "'US made bigger sacrifices than...': Trump aide slams EU over India trade deal, backs tariffs over ..."
+description: "Scott Bessent suggested that the US has “sacrificed” a lot more than the Europeans have in terms of..."
+content: "Scott Bessent suggested that the US has “sacrificed” a lot more than the Europeans have in terms of..."
+keywords: [
+0: "india-news"
+]
+creator: [
+0: "hindustan times"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:26:34"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:05:56"
+image_url: "https://www.hindustantimes.com/ht-img/img/2026/01/27/1600x900/logo/TRUMP-ACCOUNTS-13_1769482422486_..."
+video_url: null
+source_id: "hindustantimes"
+source_name: "Hindustan Times"
+source_priority: 2173
+source_url: "http://www.hindustantimes.com"
+source_icon: "https://n.bytvi.com/hindustantimes.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 76.16
+neutral: 23.46
+positive: 0.38
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "india,asia"
+1: "united states of america,north america"
+]
+ai_org: null
+ai_summary: "US Treasury Secretary Scott Bessent criticized the EU for finalizing a trade deal with India while ..."
+duplicate: false
+}
+36: {
+article_id: "0364a2e3c48d30ee28ea9d47e40f4df7"
+link: "https://news.google.com/rss/articles/CBMi-gFBVV95cUxQamRxbGh0aUxhU285a2tEZ3Fob05OMUN3UkU4aDIxczMxcU..."
+title: "'US made bigger sacrifices than...': Trump aide slams EU over India trade deal, backs tariffs over ..."
+description: "'US made bigger sacrifices than...': Trump aide slams EU over India trade deal, backs tariffs over ..."
+content: null
+keywords: null
+creator: null
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:26:34"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:39:15"
+image_url: null
+video_url: null
+source_id: "google"
+source_name: "Google News"
+source_priority: 14
+source_url: "https://news.google.com"
+source_icon: "https://n.bytvi.com/google.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 46.16
+neutral: 50.27
+positive: 3.57
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "united states of america,north america"
+1: "india,asia"
+]
+ai_org: [
+0: "hindustan times"
+]
+ai_summary: "A Trump aide criticized the EU for its trade deal with India, arguing it undermines US interests an..."
+duplicate: false
+}
+37: {
+article_id: "2df51a645f0ce551f0fe25bdaad8fbf0"
+link: "https://timesofindia.indiatimes.com/business/india-business/europe-financing-war-against-themselves..."
+title: "‘Europe financing war against themselves’: India-EU ‘mother of all trade deals’ draws US ire"
+description: "US treasury secretary Scott Bessent targeted the India-EU trade deal, alleging Europe indirectly fu..."
+content: "US treasury secretary Scott Bessent attacked the India-EU free trade agreement set to be announced ..."
+keywords: [
+0: "russia ukraine war energy trade"
+1: "business news today"
+2: "india-eu trade deal"
+3: "scott bessent us treasury"
+4: "india business news"
+5: "stock market"
+6: "financial news"
+7: "global oil trade"
+8: "free trade agreement"
+9: "business news"
+]
+creator: [
+0: "toi business desk"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:24:38"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:37:00"
+image_url: "https://static.toiimg.com/thumb/msid-127591626,imgsize-1338933,width-400,resizemode-4/pm-modi-and-u..."
+video_url: null
+source_id: "toi"
+source_name: "The Times Of India"
+source_priority: 2178
+source_url: "https://timesofindia.indiatimes.com"
+source_icon: "https://n.bytvi.com/toi.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 98.56
+neutral: 1.42
+positive: 0.02
+}
+ai_tag: [
+0: "government"
+1: "national security"
+]
+ai_region: [
+0: "europe"
+1: "united states of america,north america"
+2: "india,asia"
+]
+ai_org: null
+ai_summary: "US Treasury Secretary Scott Bessent criticized the India-EU trade deal, claiming Europe indirectly ..."
+duplicate: false
+}
+38: {
+article_id: "a0a0b17d23d335df6b2f8e6d53f12c8d"
+link: "https://www.timesnownews.com/world/keep-dreaming-if-you-feel-europe-can-defend-itself-without-us-na..."
+title: "'You Can't....Keep On Dreaming': NATO Chief On Europe’s Defense Without US Amid Greenland Tensions"
+description: "NATO chief Mark Rutte warns Europe cannot defend itself without US support, urging a dramatic incre..."
+content: "NATO Secretary-General Mark Rutte delivered a stark warning on Monday, insisting that Europe is inc..."
+keywords: [
+0: "nato"
+1: "trumps"
+2: "greenland"
+3: "european union"
+4: "rutte"
+5: "trump"
+6: "donald trumps"
+7: "mark rutte"
+8: "europe"
+9: "europes"
+]
+creator: [
+0: "sudhanshu mishra"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:04:13"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:06:14"
+image_url: "https://images.timesnownews.com/thumb/msid-153511245,imgsize-33114,width-1280,height-720/153511245...."
+video_url: null
+source_id: "timesnownews"
+source_name: "Times Now News"
+source_priority: 2243
+source_url: "https://www.timesnownews.com"
+source_icon: "https://n.bytvi.com/timesnownews.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 82.78
+neutral: 16.5
+positive: 0.72
+}
+ai_tag: [
+0: "conflicts & war"
+]
+ai_region: [
+0: "europe"
+1: "united states of america,north america"
+]
+ai_org: [
+0: "greenland tensions"
+]
+ai_summary: "NATO Secretary-General Mark Rutte warned that Europe cannot defend itself without US support, urgin..."
+duplicate: false
+}
+39: {
+article_id: "2334ff671a37debf37961525db9ec1d1"
+link: "https://news.abplive.com/education/school-assembly-news-headlines-today-january-27-top-national-int..."
+title: "School Assembly News Headlines Today January 27, Top National, International, Sports, Business News"
+description: "School Assembly News Headlines: Kickstart your day with a brief round-up of major updates from Indi..."
+content: "School Assembly News Headlines: Kickstart your day with a brief round-up of major updates from Indi..."
+keywords: [
+0: "education"
+]
+creator: [
+0: "animesh bhardwaj"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "science"
+]
+datatype: "news"
+pubDate: "2026-01-27 03:03:22"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:40:05"
+image_url: "https://feeds.abplive.com/onecms/images/uploaded-images/2025/12/19/dec808f3959462bdee89a0e8c79e3d8b..."
+video_url: null
+source_id: "abplive"
+source_name: "Abp News"
+source_priority: 7754
+source_url: "http://abplive.com"
+source_icon: "https://n.bytvi.com/abplive.jpg"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.06
+neutral: 97.38
+positive: 2.56
+}
+ai_tag: [
+0: "education"
+]
+ai_region: null
+ai_org: null
+ai_summary: "Commerce Secretary confirms India-EU trade pact to start next year amidst nationwide bank unions' s..."
+duplicate: false
+}
+40: {
+article_id: "619950c3a0f50d5528ed3c1991c8cc8b"
+link: "https://www.bbc.com/news/articles/cp3zp58wqlno"
+title: "Starmer says he won't 'choose between' the US or China"
+description: "Sir Keir says ignoring China "wouldn't be sensible" as he prepares to visit the country."
+content: "Prime Minister Sir Keir Starmer has said he will not be forced to "choose between" relations with t..."
+keywords: null
+creator: [
+0: "james chater"
+]
+language: "english"
+country: [
+0: "united kingdom"
+]
+category: [
+0: "top"
+1: "politics"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:55:36"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:05:18"
+image_url: "https://ichef.bbci.co.uk/news/1024/branded_news/7d48/live/0f6a7420-fb22-11f0-a7cb-f7a7de228641.jpg"
+video_url: null
+source_id: "bbc"
+source_name: "The Bbc"
+source_priority: 1781
+source_url: "http://www.bbc.com"
+source_icon: "https://n.bytvi.com/bbc.jpg"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 0.59
+neutral: 99.01
+positive: 0.4
+}
+ai_tag: [
+0: "government"
+]
+ai_region: [
+0: "china,texas,united states of america,north america"
+1: "united states of america,north america"
+2: "china,maine,united states of america,north america"
+]
+ai_org: null
+ai_summary: "Prime Minister Sir Keir Starmer has stated he will not have to choose between the US and China, emp..."
+duplicate: false
+}
+41: {
+article_id: "cf9109de1a6451f2d2fd6bb24049f54c"
+link: "https://www.ndtvprofit.com/markets/gold-silver-price-today-jan-27-check-prices-in-mumbai-delhi-chen..."
+title: "Gold, Silver Price Today, Jan 27 - Check Prices In Mumbai, Delhi, Chennai"
+description: "Gold and silver prices in India remain near record highs, driven by global safe-haven demand, indus..."
+content: "Gold and silver prices remain near record highs, driven by strong global safe‐haven demand amid ris..."
+keywords: [
+0: "markets"
+]
+creator: [
+0: "ndtv profit"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:53:59"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 04:06:32"
+image_url: "https://c.ndtvimg.com/2026-01/ff8tr6po_picture-used-for-representational-purpose-only_625x300_27_Ja..."
+video_url: null
+source_id: "ndtv"
+source_name: "Ndtv"
+source_priority: 1204
+source_url: "http://www.ndtv.com"
+source_icon: "https://n.bytvi.com/ndtv.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.02
+neutral: 0.32
+positive: 99.66
+}
+ai_tag: [
+0: "economy"
+]
+ai_region: [
+0: "delhi,delhi,india,asia"
+1: "chennai,tamil nadu,india,asia"
+2: "india,asia"
+3: "mumbai,maharashtra,india,asia"
+4: "delhi,india,asia"
+]
+ai_org: null
+ai_summary: "Gold and silver prices in India remain near record highs, driven by global safe-haven demand, indus..."
+duplicate: false
+}
+42: {
+article_id: "96093a6c1243d996fb0458d1564d1ce0"
+link: "https://www.deccanherald.com/world/not-living-up-to-its-deal-with-us-trump-hikes-tariffs-on-south-k..."
+title: "'Not living ‌up to its deal with US': Trump hikes tariffs on South Korea to 25%"
+description: "Global Trade Update: President Donald Trump increases tariffs on South Korean autos, pharma, and lu..."
+content: "The United State's President Donald Trump on Monday said he was increasing ​tariffs on South Korean..."
+keywords: [
+0: "south korea tariffs"
+1: "auto tariffs"
+2: "trade deficit"
+3: "lumber tariffs"
+4: "donald trump"
+5: "trade agreement"
+6: "weak won currency"
+7: "washington seoul trade"
+8: "international trade news"
+9: "global trade war"
+10: "south korea finance minister"
+11: "reuters news"
+12: "us south korea relations"
+13: "us trade policy"
+14: "reciprocal tariffs"
+15: "strategic investment"
+16: "export duties"
+17: "pharmaceutical tariffs"
+18: "us south korea trade deal"
+19: "south korea legislature"
+]
+creator: [
+0: "dh web desk"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:50:35"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:07:50"
+image_url: "https://media.assettype.com/deccanherald%2F2026-01-27%2Fvgq1592i%2FDonald_Trump__12_.JPG?ar=40%3A21..."
+video_url: null
+source_id: "deccanherald"
+source_name: "Deccan Herald"
+source_priority: 4575
+source_url: "https://www.deccanherald.com"
+source_icon: "https://n.bytvi.com/deccanherald.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 97.34
+neutral: 2.64
+positive: 0.02
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "south korea,asia"
+1: "united states of america,north america"
+]
+ai_org: [
+0: "trump"
+]
+ai_summary: "President Donald Trump has raised tariffs on South Korean imports, including autos, lumber, and pha..."
+duplicate: false
+}
+43: {
+article_id: "4e4ea20ce6b1d900a40cde3f6a9d5303"
+link: "https://english.mathrubhumi.com/news/world/eu-india-fta-trade-deal-us-tariffs-jcp31eks"
+title: "‘Financing war against themselves’: Scott Bessent slams Europe over India-EU trade deal"
+description: "US Treasury Secretary Scott Bessent criticizes European allies for importing Indian-refined oil, in..."
+content: "Washington: US Treasury Secretary Scott Bessent on Sunday accused European allies of "financing the..."
+keywords: [
+0: "world"
+]
+creator: [
+0: "news desk"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "politics"
+2: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:50:17"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:07:27"
+image_url: "https://img.mathrubhumi.com/view/acePublic/alias/contentid/1os32vgrvwvnkj6r6e4/0/us-treasury-secret..."
+video_url: null
+source_id: "mathrubhumi"
+source_name: "Mathrubhumi English"
+source_priority: 7490
+source_url: "https://english.mathrubhumi.com"
+source_icon: "https://n.bytvi.com/mathrubhumi.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 95.11
+neutral: 4.77
+positive: 0.12
+}
+ai_tag: [
+0: "international trade"
+1: "national security"
+]
+ai_region: [
+0: "india,asia"
+1: "europe"
+]
+ai_org: [
+0: "us treasury"
+]
+ai_summary: "US Treasury Secretary Scott Bessent criticized European allies for importing Indian-refined oil, wh..."
+duplicate: false
+}
+44: {
+article_id: "f4eaabcbea7f07b88c99bb6e947f5a2e"
+link: "https://seekingalpha.com/article/4862770-greenskeeper-value-fund-q4-2025-letter"
+title: "GreensKeeper Value Fund Q4 2025 Letter"
+description: "The Value Fund returned +0.4% in 2025, facing significant currency headwinds and a concentrated mar..."
+content: "Summary GreensKeeper results were significantly dampened by currency headwinds; specifically, the w..."
+keywords: [
+0: "fund letters"
+1: "greenskeeper"
+]
+creator: [
+0: "greenskeeper"
+]
+language: "english"
+country: [
+0: "canada"
+]
+category: [
+0: "business"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:50:00"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:06:54"
+image_url: "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/2206645001/image_2206645001.jpg?io=gett..."
+video_url: null
+source_id: "seekingalpha"
+source_name: "Seeking Alpha"
+source_priority: 4934
+source_url: "https://seekingalpha.com"
+source_icon: "https://n.bytvi.com/seekingalpha.png"
+sentiment: "neutral"
+sentiment_stats: {
+negative: 2.49
+neutral: 95.71
+positive: 1.8
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: null
+ai_org: [
+0: "greenskeeper value fund"
+]
+ai_summary: "GreensKeeper Value Fund reported a modest +0.4% return in 2025, with currency headwinds from a weak..."
+duplicate: false
+}
+45: {
+article_id: "52338c714906a4c411b82be4adc19ff6"
+link: "https://economictimes.indiatimes.com/markets/commodities/news/gold-silver-rise-to-near-record-highs..."
+title: "Gold, silver rise to near record highs on lingering safe-haven demand"
+description: "Gold prices have reached unprecedented levels, breaking the $5,100 mark. This surge is driven by sa..."
+content: "Gold rose on Tuesday, after breaking through the $5,100 mark for the ‍first time in the previous se..."
+keywords: [
+0: "gold prices,safe-haven demand,federal reserve interest rates,silver prices,geopolitical uncertainty..."
+]
+creator: [
+0: "reuters"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:47:50"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:05:30"
+image_url: "https://img.etimg.com/photo/118783427.cms"
+video_url: null
+source_id: "economictimes_indiatimes"
+source_name: "The Economic Times"
+source_priority: 231
+source_url: "https://economictimes.indiatimes.com"
+source_icon: "https://n.bytvi.com/economictimes_indiatimes.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.02
+neutral: 0.05
+positive: 99.93
+}
+ai_tag: [
+0: "financial markets"
+1: "economy"
+]
+ai_region: null
+ai_org: null
+ai_summary: "Gold prices have surged past $5,100 for the first time, driven by safe-haven demand amid geopolitic..."
+duplicate: false
+}
+46: {
+article_id: "9c2c0dacca342d4f2f4848e017d8b9ec"
+link: "https://english.mathrubhumi.com/news/money/stock-market-today-january-27-what-investors-need-to-kno..."
+title: "Stock Market today: What investors need to know; Gift Nifty, trade talks and more"
+description: "Indian stock market poised for rebound on January 27,2026, after sharp fall; Sensex, Nifty 50 open ..."
+content: "New Delhi: The Indian stock market is poised for a positive start on Tuesday, rebounding from last ..."
+keywords: [
+0: "money"
+]
+creator: [
+0: "business desk"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:42:48"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:07:24"
+image_url: "https://img.mathrubhumi.com/view/acePublic/alias/contentid/1os2sy44f5uegx36jl8/0/bse-stock-market-j..."
+video_url: null
+source_id: "mathrubhumi"
+source_name: "Mathrubhumi English"
+source_priority: 7490
+source_url: "https://english.mathrubhumi.com"
+source_icon: "https://n.bytvi.com/mathrubhumi.png"
+sentiment: "positive"
+sentiment_stats: {
+negative: 0.04
+neutral: 8.2
+positive: 91.76
+}
+ai_tag: [
+0: "financial markets"
+]
+ai_region: null
+ai_org: [
+0: "sensex"
+]
+ai_summary: "The Indian stock market is expected to rebound on January 27, 2026, after a sharp sell-off last wee..."
+duplicate: false
+}
+47: {
+article_id: "54945e0fec88dd6a5a8e7d76414365fe"
+link: "https://ca.news.yahoo.com/trump-says-impose-tariffs-south-013037300.html"
+title: "Trump says he will impose new tariffs on South Korea as he criticises delays in trade deal"
+description: "US president says tariffs on automobiles, lumber and pharmaceuticals will rise to 25%, accusing Seo..."
+content: "Donald Trump has said he is raising tariffs on South Korean goods including automobiles, lumber and..."
+keywords: [
+0: "news"
+]
+creator: [
+0: "the guardian"
+]
+language: "english"
+country: [
+0: "canada"
+]
+category: [
+0: "sports"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:42:45"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:03:58"
+image_url: "https://s.yimg.com/ny/api/res/1.2/yNjujQIz8qApFOOEnwmqag--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD05OTQ7..."
+video_url: null
+source_id: "yahoo"
+source_name: "Yahoo! News"
+source_priority: 17
+source_url: "https://news.yahoo.com"
+source_icon: "https://n.bytvi.com/yahoo.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 89.07
+neutral: 10.88
+positive: 0.05
+}
+ai_tag: [
+0: "economy"
+]
+ai_region: [
+0: "seoul,seoul,south korea,asia"
+1: "united states of america,north america"
+2: "seoul,south korea,asia"
+3: "south korea,asia"
+]
+ai_org: null
+ai_summary: "US President Donald Trump announced plans to increase tariffs on South Korean goods, including auto..."
+duplicate: false
+}
+48: {
+article_id: "88c6d3c4f8ec7ecf96a9d0816528b574"
+link: "https://www.businesstoday.in/world/us/story/europe-financing-war-against-themselves-us-treasury-bes..."
+title: "'Europe financing war against themselves': US Treasury Bessent calls out EU’s India refined fuel im..."
+description: "Bessent claimed European customers are effectively supporting the Russia-Ukraine conflict by import..."
+content: "Even after Europe scaled down direct energy buying from Russia, US Treasury Secretary Scott Bessent..."
+keywords: [
+0: "trump tariffs on india"
+1: "abc news interview scott bessent"
+2: "us treasury secretary"
+3: "india refined products europe buys"
+4: "ursula von der leyen antonio costa"
+5: "india-eu fta announcement tuesday"
+6: "india eu summit new delhi"
+7: "transatlantic tensions energy sanctions"
+8: "india russian oil imports collapsed"
+9: "reuters data india russian oil imports december two-year low"
+10: "us europe sanctions enforcement debate"
+11: "global oil trade loopholes"
+12: "25% tariff on india russian oil"
+13: "financing the war against themselves"
+14: "tariff relief path india"
+15: "europe indirect funding russia-ukraine war"
+16: "scott bessent"
+17: "politico interview bessent wef"
+18: "operation atalanta aspides eu naval operations flags"
+19: "opec share 11-month high"
+20: "india eu trade deal negotiations concluded"
+21: "russian crude to india refining"
+]
+creator: [
+0: "business_today"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "business"
+1: "top"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:40:33"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:38:06"
+image_url: "https://akm-img-a-in.tosshub.com/businesstoday/images/story/202601/697820679d772-us-oil-tariff-case..."
+video_url: null
+source_id: "businesstoday"
+source_name: "Business News India"
+source_priority: 5073
+source_url: "https://www.businesstoday.in"
+source_icon: "https://n.bytvi.com/businesstoday.jpg"
+sentiment: "negative"
+sentiment_stats: {
+negative: 94.3
+neutral: 5.58
+positive: 0.12
+}
+ai_tag: [
+0: "international trade"
+]
+ai_region: [
+0: "india,asia"
+1: "russia,europe/asia"
+2: "europe"
+3: "ukraine,europe"
+]
+ai_org: [
+0: "us treasury bessent"
+]
+ai_summary: "US Treasury Secretary Scott Bessent criticized the European Union for indirectly supporting the Rus..."
+duplicate: false
+}
+49: {
+article_id: "ccc5ce8676c49ea078a35cbd2c46d1d0"
+link: "https://www.news18.com/world/europe-cant-defend-itself-without-us-rutte-warns-as-greenland-row-stra..."
+title: "'Europe Can't Defend Itself Without US': Mark Rutte Warns As Greenland Row Strains NATO Alliance"
+description: "NATO chief Mark Rutte warns Europe that it can't defend itself without US support. This comes amid ..."
+content: "NATO chief Mark Rutte warns Europe that it can't defend itself without US support. This comes amid ..."
+keywords: [
+0: "world"
+]
+creator: [
+0: "manisha roy"
+]
+language: "english"
+country: [
+0: "india"
+]
+category: [
+0: "world"
+]
+datatype: "news"
+pubDate: "2026-01-27 02:38:30"
+pubDateTZ: "UTC"
+fetched_at: "2026-01-27 03:05:31"
+image_url: "https://images.news18.com/ibnlive/uploads/2025/09/mark-rutte-2025-09-c2c165ec5edb24961a016909992fd0..."
+video_url: null
+source_id: "news18"
+source_name: "News 18"
+source_priority: 1063
+source_url: "https://www.news18.com"
+source_icon: "https://n.bytvi.com/news18.png"
+sentiment: "negative"
+sentiment_stats: {
+negative: 93.15
+neutral: 6.76
+positive: 0.09
+}
+ai_tag: [
+0: "conflicts & war"
+]
+ai_region: [
+0: "europe"
+1: "united states of america,north america"
+]
+ai_org: [
+0: "greenland row strains nato alliance"
+]
+ai_summary: "NATO chief Mark Rutte warns Europe cannot defend itself without US support, emphasizing the need fo..."
+duplicate: false
+}
+]
+nextPage: "1769481510770003223"
+}
+2.News for domain BBC
+
+https://newsdata.io/api/1/latest?apikey=pub_3d9bd1d5c47c489dbe378e29043de85e&domain=bbc
+
+3. News for Category Science
+
+https://newsdata.io/api/1/latest?apikey=pub_3d9bd1d5c47c489dbe378e29043de85e&category=science
+

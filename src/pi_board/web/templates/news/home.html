@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card news-landing {% if rotate == 90 or rotate == 270 %}rotated{% endif %}">
+  <div class="news-header">
+    <h1>News</h1>
+    <button type="button" class="refresh-btn" onclick="PiBoard.refreshNews()">↻ Refresh</button>
+  </div>
+
+  <p class="muted">Latest headlines from your feeds. Click a category to see more.</p>
+
+  {% for feed in feeds %}
+  <div class="news-feed-summary">
+    <div class="feed-header">
+      <h2>{{ feed.label }}</h2>
+      <div class="feed-actions">
+        <a href="{{ url_for('piboard.news_feed', feed_key=feed.key) }}" class="btn-small">View All</a>
+        <a href="{{ url_for('piboard.news_display', feed_key=feed.key) }}" class="btn-small accent">Display Mode</a>
+      </div>
+    </div>
+
+    {% if feed.articles %}
+    <div class="news-preview-grid">
+      {% for article in feed.articles %}
+      <a href="{{ url_for('piboard.news_article', article_id=article.article_id) }}" class="news-preview-card">
+        {% if article.image_url %}
+        <div class="news-preview-image" style="background-image: url('{{ article.image_url }}')"></div>
+        {% else %}
+        <div class="news-preview-image no-image">📰</div>
+        {% endif %}
+        <div class="news-preview-title">{{ article.title }}</div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted">No articles available. Try refreshing or check your API key.</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card news-article-page {% if rotate == 90 or rotate == 270 %}rotated{% endif %}">
+  <div class="news-header">
+    <a href="{{ url_for('piboard.news_home') }}" class="back-link">← Back</a>
+  </div>
+
+  <article class="news-article">
+    <h1 class="article-title">{{ article.title }}</h1>
+
+    <div class="article-meta">
+      {% if article.source_name %}{{ article.source_name }}{% endif %}
+      {% if article.pub_date %} • {{ article.pub_date[:16] }}{% endif %}
+    </div>
+
+    {% if article.image_url %}
+    <div class="article-hero">
+      <img src="{{ article.image_url }}" alt="{{ article.title }}" />
+    </div>
+    {% endif %}
+
+    {% if article.content %}
+    <div class="article-content">{{ article.content }}</div>
+    {% elif article.description %}
+    <div class="article-content">{{ article.description }}</div>
+    {% else %}
+    <div class="article-content muted">
+      Full content not available. 
+      <a href="{{ article.link }}" target="_blank" rel="noopener">Read on original site →</a>
+    </div>
+    {% endif %}
+
+    <div class="article-actions">
+      <a href="{{ article.link }}" target="_blank" rel="noopener" class="btn">Read Original →</a>
+    </div>
+  </article>
+</section>
+{% endblock %}
